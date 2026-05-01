@@ -10,13 +10,22 @@
   }
 
   const DONATE_URL = "https://t.me/appsmeridian_bot";
+  const CHANNEL_URL = "https://t.me/+N-lQ58PBI9ZiMDJi";
   const USE_CARD_IMAGES = true;
   const MUSIC_TRACKS = [
     "./assets/audio/cooking-with-the-italians.mp3",
     "./assets/audio/the-little-cafe.mp3"
   ];
+  const VOICE_CLIPS = {
+    scopaPlayer: "./assets/audio/voice/scopa-player.mp3",
+    scopaBot: "./assets/audio/voice/scopa-bot.mp3",
+    invalidMove: "./assets/audio/voice/invalid-move.mp3",
+    mustTakeSingle: "./assets/audio/voice/must-take-single.mp3",
+    settebello: "./assets/audio/voice/settebello.mp3"
+  };
   const sound = createSoundEngine();
   const music = createMusicPlayer(MUSIC_TRACKS);
+  const voice = createVoicePlayer(VOICE_CLIPS);
 
   const suits = [
     { id: "denari", name: "Пентакли", icon: "●" },
@@ -29,6 +38,7 @@
   const primiera = { 7: 21, 6: 18, 1: 16, 5: 15, 4: 14, 3: 13, 2: 12, 8: 10, 9: 10, 10: 10 };
 
   const playerScoreEl = document.getElementById("playerScore");
+  const appShell = document.querySelector(".app-shell");
   const botScoreEl = document.getElementById("botScore");
   const deckCountEl = document.getElementById("deckCount");
   const botHandEl = document.getElementById("botHand");
@@ -44,11 +54,16 @@
   const nextRoundButton = document.getElementById("nextRoundButton");
   const newMatchButton = document.getElementById("newMatchButton");
   const musicButton = document.getElementById("musicButton");
+  const channelButton = document.getElementById("channelButton");
   const donateButton = document.getElementById("donateButton");
   const rulesButton = document.getElementById("rulesButton");
   const rulesPanel = document.getElementById("rulesPanel");
   const closeRulesButton = document.getElementById("closeRulesButton");
   const loadingScreen = document.getElementById("loadingScreen");
+  const scopaCelebration = document.getElementById("scopaCelebration");
+  const scopaCelebrationText = document.getElementById("scopaCelebrationText");
+  const confettiLayer = document.getElementById("confettiLayer");
+  const modalBackdrop = document.getElementById("modalBackdrop");
 
   let match;
 
@@ -80,11 +95,12 @@
 
   function newMatch() {
     sound.play("deal");
-    match = { scores: { player: 0, bot: 0 }, round: null };
+    match = { scores: { player: 0, bot: 0 }, roundNumber: 0, round: null };
     startRound();
   }
 
   function startRound() {
+    match.roundNumber += 1;
     const deck = createDeck();
     match.round = {
       deck,
@@ -96,6 +112,7 @@
       selectedHandId: null,
       selectedTableIds: new Set(),
       lastCapture: null,
+      nextBotDelay: 650,
       turn: "player",
       ended: false
     };
@@ -245,6 +262,7 @@
     if (picked.length > 0 && selectedSum !== card.value) {
       round.playerHand.push(card);
       sound.play("warn");
+      voice.play("invalidMove");
       setStatus(`Сумма выбранных карт ${selectedSum}, нужна ${card.value}.`, "warn");
       render();
       return;
@@ -254,6 +272,7 @@
     if (picked.length > 1 && exactTableCard) {
       round.playerHand.push(card);
       sound.play("warn");
+      voice.play("mustTakeSingle");
       setStatus(`По правилам нужно взять одиночную карту ${displayCard(exactTableCard)}.`, "warn");
       render();
       return;
@@ -289,10 +308,20 @@
     round.table = round.table.filter((item) => !ids.has(item.id));
     round.captures[owner].push(card, ...tableCards);
     round.lastCapture = owner;
-    if (round.table.length === 0 && (round.deck.length > 0 || round.playerHand.length > 0 || round.botHand.length > 0)) {
+    const hasSettebelloCapture = owner === "player" && [card, ...tableCards].some((item) => item.suit === "denari" && item.value === 7);
+    const madeScopa = round.table.length === 0 && (round.deck.length > 0 || round.playerHand.length > 0 || round.botHand.length > 0);
+    if (madeScopa) {
       round.scope[owner] += 1;
       sound.play("scopa");
+      voice.play(owner === "player" ? "scopaPlayer" : "scopaBot");
+      showScopaCelebration(owner);
+      triggerScopaImpact();
+      if (owner === "player") round.nextBotDelay = Math.max(round.nextBotDelay, 3000);
       pulseHaptic(owner === "player" ? "success" : "warning");
+    }
+    if (hasSettebelloCapture) {
+      round.nextBotDelay = Math.max(round.nextBotDelay, madeScopa ? 3500 : 2200);
+      voice.play("settebello", madeScopa ? 1000 : 0);
     }
   }
 
@@ -303,8 +332,10 @@
       else return endRound();
     }
 
+    const delay = round.nextBotDelay || 650;
+    round.nextBotDelay = 650;
     round.turn = "bot";
-    setTimeout(botTurn, 650);
+    setTimeout(botTurn, delay);
   }
 
   function dealHands() {
@@ -402,8 +433,14 @@
     const result = scoreRound(round);
     match.scores.player += result.player.total;
     match.scores.bot += result.bot.total;
-    showRoundPanel(result);
-    sound.play("round");
+    const isMatchOver = match.scores.player >= 11 || match.scores.bot >= 11;
+    showRoundPanel(result, isMatchOver);
+    if (isMatchOver && match.scores.player > match.scores.bot) {
+      sound.play("victory");
+      showScopaCelebration("victory");
+    } else {
+      sound.play("round");
+    }
     setStatus(match.scores.player >= 11 || match.scores.bot >= 11 ? "Матч завершен. Можно начать новый." : "Раунд завершен.", "win");
     render();
   }
@@ -458,20 +495,42 @@
     return total;
   }
 
-  function showRoundPanel(result) {
+  function showRoundPanel(result, isMatchOver) {
     const rows = [
       ["Карт больше", result.player.cards, result.bot.cards],
       [`Пентакли (${result.player.denariCount}:${result.bot.denariCount})`, result.player.denari, result.bot.denari],
-      ["Сеттебелло", result.player.settebello, result.bot.settebello],
-      [`Примьера (${result.player.primieraValue}:${result.bot.primieraValue})`, result.player.primiera, result.bot.primiera],
-      ["Scopa", result.player.scopa, result.bot.scopa],
-      ["Итого за раунд", result.player.total, result.bot.total]
+      ["Сеттебелло (7 пентаклей)", result.player.settebello, result.bot.settebello],
+      [`Примьера раунда (${result.player.primieraValue}:${result.bot.primieraValue})`, result.player.primiera, result.bot.primiera],
+      ["Скопа", result.player.scopa, result.bot.scopa],
+      ["Итого за раунд", result.player.total, result.bot.total, "total"]
     ];
-    roundBreakdown.innerHTML = "<span></span><strong>Вы</strong><strong>Бот</strong>";
-    for (const [label, player, bot] of rows) {
-      roundBreakdown.insertAdjacentHTML("beforeend", `<span>${label}</span><span>${player}</span><span>${bot}</span>`);
+    roundPanel.classList.toggle("match-result", isMatchOver);
+    roundPanel.querySelector("h2").textContent = isMatchOver
+      ? (match.scores.player > match.scores.bot ? "Вы выиграли!" : "Вы проиграли")
+      : `Раунд ${match.roundNumber} завершен`;
+    const playerLeft = Math.max(0, 11 - match.scores.player);
+    const botLeft = Math.max(0, 11 - match.scores.bot);
+    const roundSummary = isMatchOver
+      ? `<div class="match-summary"><span>Итоговый счет</span><strong>${match.scores.player}:${match.scores.bot}</strong></div>`
+      : `<div class="match-summary"><span>Счет матча</span><strong>${match.scores.player}:${match.scores.bot}</strong><em>До победы: вам ${playerLeft}, боту ${botLeft}</em></div>`;
+    roundBreakdown.innerHTML = isMatchOver
+      ? `${roundSummary}<span></span><strong>Вы</strong><strong>Бот</strong>`
+      : `${roundSummary}<span></span><strong>Вы</strong><strong>Бот</strong>`;
+    for (const [label, player, bot, kind] of rows) {
+      const rowClass = kind === "total" ? " class=\"round-total-label\"" : "";
+      const valueClass = kind === "total" ? " class=\"round-total-value\"" : "";
+      roundBreakdown.insertAdjacentHTML("beforeend", `<span${rowClass}>${label}</span><span${valueClass}>${player}</span><span${valueClass}>${bot}</span>`);
     }
-    nextRoundButton.textContent = match.scores.player >= 11 || match.scores.bot >= 11 ? "Новый матч" : "Следующий раунд";
+    roundBreakdown.insertAdjacentHTML("beforeend", `
+      <div class="score-note">Числа в скобках показывают показатели этого раунда: количество пентаклей и сумму примьеры.</div>
+      <div class="development-note">
+        <strong>Игра находится в разработке</strong>
+        <span>Мы хотим добавить онлайн-режим для игры с друзьями. Поддержка донатом поможет оплатить работу серверов и сохранить игру доступной после тестовой недели.</span>
+        <a class="support-link" href="${DONATE_URL}" target="_blank" rel="noopener">Поддержать разработку</a>
+      </div>
+    `);
+    nextRoundButton.textContent = isMatchOver ? "Новый матч" : "Следующий раунд";
+    modalBackdrop.hidden = false;
     roundPanel.hidden = false;
   }
 
@@ -504,6 +563,47 @@
     window.setTimeout(() => {
       loadingScreen.classList.add("hidden");
     }, 650);
+  }
+
+  function showScopaCelebration(owner) {
+    const colors = ["#f1bd4d", "#fff2bd", "#e85151", "#4db6ff", "#65df8f", "#b98cff"];
+    const isVictory = owner === "victory";
+    scopaCelebrationText.textContent = isVictory ? "Победа в матче" : (owner === "player" ? "Ваша Скопа" : "Скопа у бота");
+    confettiLayer.innerHTML = "";
+
+    for (let i = 0; i < (isVictory ? 58 : 34); i += 1) {
+      const piece = document.createElement("span");
+      piece.className = "confetti";
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[i % colors.length];
+      piece.style.setProperty("--fall-x", `${Math.round((Math.random() - 0.5) * 180)}px`);
+      piece.style.setProperty("--fall-rotate", `${Math.round(360 + Math.random() * 620)}deg`);
+      piece.style.setProperty("--fall-duration", `${(isVictory ? 2300 : 1800) + Math.round(Math.random() * 900)}ms`);
+      piece.style.animationDelay = `${Math.round(Math.random() * (isVictory ? 760 : 520))}ms`;
+      confettiLayer.appendChild(piece);
+    }
+
+    scopaCelebration.hidden = false;
+    window.clearTimeout(showScopaCelebration.hideTimer);
+    showScopaCelebration.hideTimer = window.setTimeout(() => {
+      scopaCelebration.hidden = true;
+      confettiLayer.innerHTML = "";
+    }, isVictory ? 3900 : 3000);
+  }
+
+  function triggerScopaImpact() {
+    appShell.classList.remove("shake");
+    void appShell.offsetWidth;
+    appShell.classList.add("shake");
+    window.setTimeout(() => appShell.classList.remove("shake"), 950);
+
+    if (navigator.vibrate) navigator.vibrate([80, 60, 90, 70, 120, 80, 160]);
+    if (tg && tg.HapticFeedback) {
+      const pulses = [0, 140, 300, 500, 760];
+      for (const delay of pulses) {
+        window.setTimeout(() => tg.HapticFeedback.impactOccurred("heavy"), delay);
+      }
+    }
   }
 
   function createSoundEngine() {
@@ -551,7 +651,8 @@
         scopa: [[523, 0, 0.08, "triangle", 0.045], [659, 0.07, 0.08, "triangle", 0.05], [784, 0.14, 0.12, "sine", 0.06]],
         warn: [[140, 0, 0.1, "sawtooth", 0.035]],
         deal: [[260, 0, 0.045, "triangle", 0.025], [300, 0.045, 0.045, "triangle", 0.025], [340, 0.09, 0.05, "triangle", 0.025]],
-        round: [[330, 0, 0.09, "sine", 0.04], [440, 0.08, 0.1, "sine", 0.04], [550, 0.17, 0.14, "sine", 0.045]]
+        round: [[330, 0, 0.09, "sine", 0.04], [440, 0.08, 0.1, "sine", 0.04], [550, 0.17, 0.14, "sine", 0.045]],
+        victory: [[392, 0, 0.09, "triangle", 0.045], [523, 0.08, 0.11, "triangle", 0.055], [659, 0.18, 0.13, "sine", 0.06], [784, 0.31, 0.2, "sine", 0.065]]
       };
       for (const args of patterns[name] || []) tone(...args);
     }
@@ -593,19 +694,49 @@
     return { toggle };
   }
 
+  function createVoicePlayer(clips) {
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.volume = 0.9;
+    let pendingTimer = null;
+
+    function play(name, delay = 0) {
+      const src = clips[name];
+      if (!src) return;
+
+      window.clearTimeout(pendingTimer);
+      pendingTimer = window.setTimeout(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = src;
+        audio.play().catch(() => {});
+      }, delay);
+    }
+
+    return { play };
+  }
+
   playButton.addEventListener("click", playSelected);
   musicButton.addEventListener("click", async () => {
     const playing = await music.toggle();
     musicButton.classList.toggle("active", playing);
+    musicButton.classList.toggle("muted", !playing);
     musicButton.textContent = playing ? "♫" : "♪";
     musicButton.setAttribute("aria-label", playing ? "Выключить музыку" : "Включить музыку");
     musicButton.setAttribute("title", playing ? "Выключить музыку" : "Включить музыку");
   });
   nextRoundButton.addEventListener("click", () => {
+    roundPanel.classList.remove("match-result");
+    modalBackdrop.hidden = true;
     if (match.scores.player >= 11 || match.scores.bot >= 11) newMatch();
     else startRound();
   });
   newMatchButton.addEventListener("click", newMatch);
+  channelButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    const popup = window.open(CHANNEL_URL, "_blank", "noopener,noreferrer");
+    if (!popup && tg) tg.openTelegramLink(CHANNEL_URL);
+  });
   donateButton.addEventListener("click", (event) => {
     if (!DONATE_URL) {
       event.preventDefault();
@@ -627,6 +758,13 @@
   });
   rulesPanel.addEventListener("click", (event) => {
     if (event.target === rulesPanel) rulesPanel.hidden = true;
+  });
+  document.addEventListener("click", (event) => {
+    const supportLink = event.target.closest(".support-link");
+    if (!supportLink) return;
+    event.preventDefault();
+    const popup = window.open(DONATE_URL, "_blank", "noopener,noreferrer");
+    if (!popup && tg) tg.openTelegramLink(DONATE_URL);
   });
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !rulesPanel.hidden) rulesPanel.hidden = true;

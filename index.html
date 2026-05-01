@@ -19,9 +19,14 @@
         <h2>Скопа</h2>
         <p>Тасуем колоду...</p>
         <div class="loading-bar"><span></span></div>
-        <a class="loading-channel" href="https://t.me/+N-lQ58PBI9ZiMDJi" target="_blank" rel="noopener">
-          Наш Telegram-канал
-        </a>
+      </div>
+    </div>
+
+    <div class="scopa-celebration" id="scopaCelebration" hidden aria-live="polite">
+      <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+      <div class="scopa-badge">
+        <span>Скопа!</span>
+        <strong id="scopaCelebrationText">Стол очищен</strong>
       </div>
     </div>
 
@@ -32,7 +37,8 @@
           <h1>Скопа</h1>
         </div>
         <div class="top-actions">
-          <button class="icon-button" id="musicButton" type="button" aria-label="Включить музыку" title="Включить музыку">♪</button>
+          <a class="icon-button channel-button" id="channelButton" href="https://t.me/+N-lQ58PBI9ZiMDJi" target="_blank" rel="noopener" aria-label="Наш Telegram-канал" title="Наш Telegram-канал"><span>TG</span></a>
+          <button class="icon-button muted" id="musicButton" type="button" aria-label="Включить музыку" title="Включить музыку">♪</button>
           <button class="icon-button" id="newMatchButton" type="button" aria-label="Новый матч" title="Новый матч">↻</button>
         </div>
       </header>
@@ -57,9 +63,9 @@
           <span class="section-label">Рука бота</span>
           <div class="card-backs" id="botHand"></div>
         </div>
-        <div class="mini-stats">
-          <span>Scopa</span>
-          <strong><span id="playerScopa">0</span>:<span id="botScopa">0</span></strong>
+        <div class="scopa-counter bot-counter">
+          <span>Скопа</span>
+          <strong id="botScopa">0</strong>
         </div>
       </section>
 
@@ -74,6 +80,10 @@
       <section class="hand-zone" aria-label="Ваша рука">
         <div class="zone-title">
           <span class="section-label">Ваша рука</span>
+          <div class="scopa-counter player-counter">
+            <span>Скопа</span>
+            <strong id="playerScopa">0</strong>
+          </div>
           <button class="text-button" id="playButton" type="button" disabled>Положить</button>
         </div>
         <div class="hand-cards" id="playerHand"></div>
@@ -155,6 +165,7 @@
         <button class="primary-button" id="nextRoundButton" type="button">Следующий раунд</button>
       </section>
     </main>
+    <div class="modal-backdrop" id="modalBackdrop" hidden></div>
 
     <script src="./game.js"></script>
   </body>
