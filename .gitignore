@@ -1,0 +1,19 @@
+# Local/private working files
+video_frames/
+
+# Temporary generated previews
+assets/cards/_contact_sheet.jpg
+
+# Secrets and local environment files
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.log
+
+# OS/editor noise
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/

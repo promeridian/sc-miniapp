@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#123229">
+    <title>Скопа</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <div class="loading-screen" id="loadingScreen" aria-live="polite">
+      <div class="loading-card">
+        <div class="loading-deck" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <h2>Скопа</h2>
+        <p>Тасуем колоду...</p>
+        <div class="loading-bar"><span></span></div>
+        <a class="loading-channel" href="https://t.me/+N-lQ58PBI9ZiMDJi" target="_blank" rel="noopener">
+          Наш Telegram-канал
+        </a>
+      </div>
+    </div>
+
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Итальянская карточная игра</p>
+          <h1>Скопа</h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="musicButton" type="button" aria-label="Включить музыку" title="Включить музыку">♪</button>
+          <button class="icon-button" id="newMatchButton" type="button" aria-label="Новый матч" title="Новый матч">↻</button>
+        </div>
+      </header>
+
+      <section class="scoreboard" aria-label="Счет матча">
+        <div class="score">
+          <span>Вы</span>
+          <strong id="playerScore">0</strong>
+        </div>
+        <div class="score">
+          <span>Бот</span>
+          <strong id="botScore">0</strong>
+        </div>
+        <div class="score">
+          <span>Колода</span>
+          <strong id="deckCount">40</strong>
+        </div>
+      </section>
+
+      <section class="opponent">
+        <div>
+          <span class="section-label">Рука бота</span>
+          <div class="card-backs" id="botHand"></div>
+        </div>
+        <div class="mini-stats">
+          <span>Scopa</span>
+          <strong><span id="playerScopa">0</span>:<span id="botScopa">0</span></strong>
+        </div>
+      </section>
+
+      <section class="table-zone" aria-label="Стол">
+        <div class="zone-title">
+          <span class="section-label">Стол</span>
+          <strong id="tableSum">0</strong>
+        </div>
+        <div class="table-cards" id="tableCards"></div>
+      </section>
+
+      <section class="hand-zone" aria-label="Ваша рука">
+        <div class="zone-title">
+          <span class="section-label">Ваша рука</span>
+          <button class="text-button" id="playButton" type="button" disabled>Положить</button>
+        </div>
+        <div class="hand-cards" id="playerHand"></div>
+      </section>
+
+      <p class="status" id="statusText">Выберите карту из руки. Потом заберите карты с такой же суммой или положите карту на стол.</p>
+
+      <button class="rules-button" id="rulesButton" type="button">
+        <span>?</span>
+        <strong>Правила игры</strong>
+      </button>
+
+      <a class="donate-button" id="donateButton" href="https://t.me/appsmeridian_bot" target="_blank" rel="noopener">
+        <span class="donate-icon">★</span>
+        <span>Поддержать донатом</span>
+      </a>
+
+      <section class="rules-panel" id="rulesPanel" hidden aria-label="Правила игры">
+        <div class="rules-sheet">
+          <div class="rules-header">
+            <div>
+              <p class="eyebrow">Как играть</p>
+              <h2>Правила Скопы</h2>
+            </div>
+            <button class="icon-button" id="closeRulesButton" type="button" aria-label="Закрыть правила">×</button>
+          </div>
+
+          <div class="rules-content">
+            <article class="rules-block">
+              <h3>Цель</h3>
+              <p>Забирайте карты со стола картой из руки. Раунд идет до конца колоды, матч играется до 11 очков.</p>
+              <div class="rules-card-row">
+                <img src="./assets/cards/denari-7.png" alt="7 пентаклей">
+                <img src="./assets/cards/coppe-10.png" alt="Король кубков">
+                <img src="./assets/cards/spade-1.png" alt="Туз мечей">
+                <img src="./assets/cards/bastoni-8.png" alt="Валет жезлов">
+              </div>
+            </article>
+
+            <article class="rules-block">
+              <h3>Ход</h3>
+              <p>Если на столе нет одиночной карты нужного значения, можно забрать несколько карт, сумма которых равна вашей карте.</p>
+              <div class="rules-example">
+                <img src="./assets/cards/spade-9.png" alt="9 мечей">
+                <span>=</span>
+                <img src="./assets/cards/denari-2.png" alt="2 пентаклей">
+                <span>+</span>
+                <img src="./assets/cards/coppe-7.png" alt="7 кубков">
+              </div>
+            </article>
+
+            <article class="rules-block">
+              <h3>Важное правило</h3>
+              <p>Если на столе есть одиночная карта нужного значения, нужно брать именно ее, а не комбинацию из нескольких карт.</p>
+              <div class="rules-example">
+                <img src="./assets/cards/bastoni-7.png" alt="7 жезлов">
+                <span>→</span>
+                <img src="./assets/cards/denari-7.png" alt="7 пентаклей">
+              </div>
+            </article>
+
+            <article class="rules-block">
+              <h3>Очки</h3>
+              <ul>
+                <li>Больше карт за раунд: 1 очко.</li>
+                <li>Больше пентаклей: 1 очко.</li>
+                <li>Сеттебелло, 7 пентаклей: 1 очко.</li>
+                <li>Примьера: 1 очко за лучшие карты по мастям.</li>
+                <li>Scopa: 1 очко за очистку стола.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="round-panel" id="roundPanel" hidden>
+        <h2>Раунд завершен</h2>
+        <div class="round-grid" id="roundBreakdown"></div>
+        <button class="primary-button" id="nextRoundButton" type="button">Следующий раунд</button>
+      </section>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
