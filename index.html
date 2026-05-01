@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#123229">
     <title>Скопа</title>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css?v=20260501-5">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
@@ -39,6 +39,7 @@
         <div class="top-actions">
           <a class="icon-button channel-button" id="channelButton" href="https://t.me/+N-lQ58PBI9ZiMDJi" target="_blank" rel="noopener" aria-label="Наш Telegram-канал" title="Наш Telegram-канал"><span>TG</span></a>
           <button class="icon-button muted" id="musicButton" type="button" aria-label="Включить музыку" title="Включить музыку">♪</button>
+          <button class="icon-button" id="settingsButton" type="button" aria-label="Настройки" title="Настройки">⚙</button>
           <button class="icon-button" id="newMatchButton" type="button" aria-label="Новый матч" title="Новый матч">↻</button>
         </div>
       </header>
@@ -159,6 +160,43 @@
         </div>
       </section>
 
+      <section class="settings-panel" id="settingsPanel" hidden aria-label="Настройки игры">
+        <div class="settings-sheet">
+          <div class="rules-header">
+            <div>
+              <p class="eyebrow">Звук</p>
+              <h2>Настройки</h2>
+            </div>
+            <button class="icon-button" id="closeSettingsButton" type="button" aria-label="Закрыть настройки">×</button>
+          </div>
+
+          <div class="settings-content">
+            <label class="volume-control">
+              <span>Музыка</span>
+              <input id="musicVolume" type="range" min="0" max="100" value="28">
+              <strong id="musicVolumeValue">28%</strong>
+            </label>
+            <label class="volume-control">
+              <span>Диалоги</span>
+              <input id="voiceVolume" type="range" min="0" max="100" value="90">
+              <strong id="voiceVolumeValue">90%</strong>
+            </label>
+            <label class="volume-control">
+              <span>Игровые звуки</span>
+              <input id="sfxVolume" type="range" min="0" max="100" value="70">
+              <strong id="sfxVolumeValue">70%</strong>
+            </label>
+            <label class="toggle-control">
+              <span>
+                <strong>Вибрация</strong>
+                <small>Для взяток, ошибок, Скопы и победы</small>
+              </span>
+              <input id="vibrationToggle" type="checkbox" checked>
+            </label>
+          </div>
+        </div>
+      </section>
+
       <section class="round-panel" id="roundPanel" hidden>
         <h2>Раунд завершен</h2>
         <div class="round-grid" id="roundBreakdown"></div>
@@ -167,6 +205,6 @@
     </main>
     <div class="modal-backdrop" id="modalBackdrop" hidden></div>
 
-    <script src="./game.js"></script>
+    <script src="./game.js?v=20260501-5"></script>
   </body>
 </html>

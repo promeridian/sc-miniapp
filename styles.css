@@ -962,6 +962,100 @@ h2 {
   display: none;
 }
 
+.settings-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 16;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.settings-panel[hidden] {
+  display: none;
+}
+
+.settings-sheet {
+  width: min(100%, 480px);
+  overflow: hidden;
+  border: 1px solid rgba(241, 189, 77, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(241, 189, 77, 0.08), transparent),
+    #10231f;
+  color: var(--text);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.56);
+}
+
+.settings-content {
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.volume-control {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.volume-control span {
+  color: #f3fbf7;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.volume-control strong {
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.volume-control input {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: var(--gold);
+}
+
+.toggle-control {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.toggle-control span {
+  display: grid;
+  gap: 3px;
+}
+
+.toggle-control strong {
+  color: #f3fbf7;
+  font-size: 14px;
+}
+
+.toggle-control small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.toggle-control input {
+  width: 42px;
+  height: 24px;
+  flex: 0 0 auto;
+  accent-color: var(--gold);
+}
+
 .rules-sheet {
   width: min(100%, 560px);
   max-height: min(86vh, 760px);
@@ -974,6 +1068,7 @@ h2 {
     linear-gradient(180deg, rgba(241, 189, 77, 0.08), transparent),
     #10231f;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.56);
+  color: var(--text);
 }
 
 .rules-header {
@@ -1086,6 +1181,7 @@ h2 {
   background:
     linear-gradient(180deg, rgba(241, 189, 77, 0.08), transparent),
     #10231f;
+  color: var(--text);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
@@ -1110,7 +1206,18 @@ h2 {
   gap: 8px 12px;
   margin: 14px 0;
   align-items: center;
+  color: #f3fbf7;
   font-size: 14px;
+}
+
+.round-grid > span {
+  color: #f3fbf7;
+}
+
+.round-grid > span:nth-child(3n + 2),
+.round-grid > span:nth-child(3n + 3) {
+  color: #f6e6ad;
+  font-weight: 800;
 }
 
 .round-grid strong {

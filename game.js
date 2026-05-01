@@ -5,8 +5,6 @@
   if (tg) {
     tg.ready();
     tg.expand();
-    document.documentElement.style.setProperty("--bg", tg.themeParams.bg_color || "#123229");
-    document.documentElement.style.setProperty("--text", tg.themeParams.text_color || "#f4fbf8");
   }
 
   const DONATE_URL = "https://t.me/appsmeridian_bot";
@@ -16,6 +14,12 @@
     "./assets/audio/cooking-with-the-italians.mp3",
     "./assets/audio/the-little-cafe.mp3"
   ];
+  const DEFAULT_AUDIO_SETTINGS = {
+    musicVolume: 28,
+    voiceVolume: 90,
+    sfxVolume: 70,
+    vibrationEnabled: true
+  };
   const VOICE_CLIPS = {
     scopaPlayer: "./assets/audio/voice/scopa-player.mp3",
     scopaBot: "./assets/audio/voice/scopa-bot.mp3",
@@ -23,9 +27,13 @@
     mustTakeSingle: "./assets/audio/voice/must-take-single.mp3",
     settebello: "./assets/audio/voice/settebello.mp3"
   };
-  const sound = createSoundEngine();
-  const music = createMusicPlayer(MUSIC_TRACKS);
-  const voice = createVoicePlayer(VOICE_CLIPS);
+  const audioSettings = loadAudioSettings();
+  const sound = createSoundEngine(audioSettings.sfxVolume);
+  const music = createMusicPlayer(MUSIC_TRACKS, audioSettings.musicVolume);
+  const voice = createVoicePlayer(VOICE_CLIPS, audioSettings.voiceVolume, {
+    onStart: () => music.duck(),
+    onEnd: () => music.restore()
+  });
 
   const suits = [
     { id: "denari", name: "Пентакли", icon: "●" },
@@ -54,6 +62,16 @@
   const nextRoundButton = document.getElementById("nextRoundButton");
   const newMatchButton = document.getElementById("newMatchButton");
   const musicButton = document.getElementById("musicButton");
+  const settingsButton = document.getElementById("settingsButton");
+  const settingsPanel = document.getElementById("settingsPanel");
+  const closeSettingsButton = document.getElementById("closeSettingsButton");
+  const musicVolume = document.getElementById("musicVolume");
+  const voiceVolume = document.getElementById("voiceVolume");
+  const sfxVolume = document.getElementById("sfxVolume");
+  const vibrationToggle = document.getElementById("vibrationToggle");
+  const musicVolumeValue = document.getElementById("musicVolumeValue");
+  const voiceVolumeValue = document.getElementById("voiceVolumeValue");
+  const sfxVolumeValue = document.getElementById("sfxVolumeValue");
   const channelButton = document.getElementById("channelButton");
   const donateButton = document.getElementById("donateButton");
   const rulesButton = document.getElementById("rulesButton");
@@ -243,6 +261,7 @@
     const round = match.round;
     if (!round.selectedHandId) {
       sound.play("warn");
+      triggerHaptic("error");
       setStatus("Сначала выберите карту из руки.", "warn");
       return;
     }
@@ -262,6 +281,7 @@
     if (picked.length > 0 && selectedSum !== card.value) {
       round.playerHand.push(card);
       sound.play("warn");
+      triggerHaptic("error");
       voice.play("invalidMove");
       setStatus(`Сумма выбранных карт ${selectedSum}, нужна ${card.value}.`, "warn");
       render();
@@ -272,6 +292,7 @@
     if (picked.length > 1 && exactTableCard) {
       round.playerHand.push(card);
       sound.play("warn");
+      triggerHaptic("error");
       voice.play("mustTakeSingle");
       setStatus(`По правилам нужно взять одиночную карту ${displayCard(exactTableCard)}.`, "warn");
       render();
@@ -281,6 +302,7 @@
     if (picked.length === 0 && captureOptions(card, round.table).length > 0) {
       round.playerHand.push(card);
       sound.play("warn");
+      triggerHaptic("error");
       setStatus("Эта карта может взять со стола, сбросить ее нельзя.", "warn");
       render();
       return;
@@ -293,6 +315,7 @@
     } else {
       capture("player", card, picked);
       sound.play("capture");
+      triggerHaptic("capture");
       setStatus(`Вы взяли ${picked.length + 1} карт.`, "win");
     }
 
@@ -317,10 +340,10 @@
       showScopaCelebration(owner);
       triggerScopaImpact();
       if (owner === "player") round.nextBotDelay = Math.max(round.nextBotDelay, 3000);
-      pulseHaptic(owner === "player" ? "success" : "warning");
     }
     if (hasSettebelloCapture) {
       round.nextBotDelay = Math.max(round.nextBotDelay, madeScopa ? 3500 : 2200);
+      triggerRareImpact("settebello");
       voice.play("settebello", madeScopa ? 1000 : 0);
     }
   }
@@ -438,6 +461,7 @@
     if (isMatchOver && match.scores.player > match.scores.bot) {
       sound.play("victory");
       showScopaCelebration("victory");
+      triggerRareImpact("victory");
     } else {
       sound.play("round");
     }
@@ -553,16 +577,92 @@
     statusText.className = `status${mode ? ` ${mode}` : ""}`;
   }
 
-  function pulseHaptic(kind) {
-    if (!tg || !tg.HapticFeedback) return;
-    if (kind === "success") tg.HapticFeedback.notificationOccurred("success");
-    else tg.HapticFeedback.notificationOccurred("warning");
+  function triggerHaptic(kind) {
+    if (!audioSettings.vibrationEnabled) return;
+    if (kind === "capture") {
+      if (navigator.vibrate) navigator.vibrate(35);
+      if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
+      return;
+    }
+    if (kind === "error") {
+      if (navigator.vibrate) navigator.vibrate([50, 40, 80]);
+      if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("error");
+    }
+  }
+
+  function triggerRareImpact(kind) {
+    if (!audioSettings.vibrationEnabled) return;
+    if (kind === "settebello") {
+      if (navigator.vibrate) navigator.vibrate([90, 70, 140]);
+      if (tg && tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred("medium");
+        window.setTimeout(() => tg.HapticFeedback.notificationOccurred("success"), 150);
+      }
+      return;
+    }
+    if (kind === "victory") {
+      if (navigator.vibrate) navigator.vibrate([120, 60, 160, 80, 220]);
+      if (tg && tg.HapticFeedback) {
+        [0, 170, 380, 650].forEach((delay) => {
+          window.setTimeout(() => tg.HapticFeedback.impactOccurred("heavy"), delay);
+        });
+      }
+    }
   }
 
   function hideLoading() {
     window.setTimeout(() => {
       loadingScreen.classList.add("hidden");
     }, 650);
+  }
+
+  function loadAudioSettings() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("scopaAudioSettings") || "{}");
+      return {
+        musicVolume: clampVolume(saved.musicVolume ?? DEFAULT_AUDIO_SETTINGS.musicVolume),
+        voiceVolume: clampVolume(saved.voiceVolume ?? DEFAULT_AUDIO_SETTINGS.voiceVolume),
+        sfxVolume: clampVolume(saved.sfxVolume ?? DEFAULT_AUDIO_SETTINGS.sfxVolume),
+        vibrationEnabled: saved.vibrationEnabled ?? DEFAULT_AUDIO_SETTINGS.vibrationEnabled
+      };
+    } catch (error) {
+      return { ...DEFAULT_AUDIO_SETTINGS };
+    }
+  }
+
+  function saveAudioSettings() {
+    localStorage.setItem("scopaAudioSettings", JSON.stringify(audioSettings));
+  }
+
+  function clampVolume(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return 0;
+    return Math.max(0, Math.min(100, Math.round(number)));
+  }
+
+  function syncVolumeControls() {
+    musicVolume.value = String(audioSettings.musicVolume);
+    voiceVolume.value = String(audioSettings.voiceVolume);
+    sfxVolume.value = String(audioSettings.sfxVolume);
+    vibrationToggle.checked = Boolean(audioSettings.vibrationEnabled);
+    musicVolumeValue.textContent = `${audioSettings.musicVolume}%`;
+    voiceVolumeValue.textContent = `${audioSettings.voiceVolume}%`;
+    sfxVolumeValue.textContent = `${audioSettings.sfxVolume}%`;
+  }
+
+  function updateVolume(kind, value) {
+    const volume = clampVolume(value);
+    audioSettings[kind] = volume;
+    if (kind === "musicVolume") music.setVolume(volume);
+    if (kind === "voiceVolume") voice.setVolume(volume);
+    if (kind === "sfxVolume") sound.setVolume(volume);
+    syncVolumeControls();
+    saveAudioSettings();
+  }
+
+  function updateVibration(enabled) {
+    audioSettings.vibrationEnabled = Boolean(enabled);
+    saveAudioSettings();
   }
 
   function showScopaCelebration(owner) {
@@ -597,6 +697,7 @@
     appShell.classList.add("shake");
     window.setTimeout(() => appShell.classList.remove("shake"), 950);
 
+    if (!audioSettings.vibrationEnabled) return;
     if (navigator.vibrate) navigator.vibrate([80, 60, 90, 70, 120, 80, 160]);
     if (tg && tg.HapticFeedback) {
       const pulses = [0, 140, 300, 500, 760];
@@ -606,9 +707,10 @@
     }
   }
 
-  function createSoundEngine() {
+  function createSoundEngine(initialVolume) {
     let context = null;
     let unlocked = false;
+    let volume = initialVolume / 100;
 
     function ensureContext() {
       if (!context) {
@@ -635,7 +737,7 @@
       osc.type = type || "sine";
       osc.frequency.setValueAtTime(freq, audio.currentTime + start);
       gain.gain.setValueAtTime(0.0001, audio.currentTime + start);
-      gain.gain.exponentialRampToValueAtTime(gainValue || 0.07, audio.currentTime + start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, (gainValue || 0.07) * volume), audio.currentTime + start + 0.012);
       gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + start + duration);
       osc.connect(gain);
       gain.connect(audio.destination);
@@ -645,12 +747,12 @@
 
     function play(name) {
       const patterns = {
-        tap: [[520, 0, 0.055, "triangle", 0.035]],
+        tap: [[620, 0, 0.045, "sine", 0.028], [820, 0.035, 0.035, "triangle", 0.018]],
         place: [[220, 0, 0.06, "square", 0.035], [165, 0.045, 0.08, "triangle", 0.025]],
         capture: [[420, 0, 0.06, "triangle", 0.045], [640, 0.055, 0.08, "sine", 0.055]],
         scopa: [[523, 0, 0.08, "triangle", 0.045], [659, 0.07, 0.08, "triangle", 0.05], [784, 0.14, 0.12, "sine", 0.06]],
         warn: [[140, 0, 0.1, "sawtooth", 0.035]],
-        deal: [[260, 0, 0.045, "triangle", 0.025], [300, 0.045, 0.045, "triangle", 0.025], [340, 0.09, 0.05, "triangle", 0.025]],
+        deal: [[190, 0, 0.035, "sawtooth", 0.018], [260, 0.035, 0.04, "triangle", 0.02], [190, 0.08, 0.035, "sawtooth", 0.018], [300, 0.115, 0.045, "triangle", 0.02]],
         round: [[330, 0, 0.09, "sine", 0.04], [440, 0.08, 0.1, "sine", 0.04], [550, 0.17, 0.14, "sine", 0.045]],
         victory: [[392, 0, 0.09, "triangle", 0.045], [523, 0.08, 0.11, "triangle", 0.055], [659, 0.18, 0.13, "sine", 0.06], [784, 0.31, 0.2, "sine", 0.065]]
       };
@@ -659,15 +761,22 @@
 
     window.addEventListener("pointerdown", unlock, { once: true });
     window.addEventListener("keydown", unlock, { once: true });
-    return { play };
+    function setVolume(nextVolume) {
+      volume = clampVolume(nextVolume) / 100;
+    }
+
+    return { play, setVolume };
   }
 
-  function createMusicPlayer(tracks) {
+  function createMusicPlayer(tracks, initialVolume) {
     let index = 0;
     let enabled = false;
+    let ducked = false;
+    let restoreTimer = null;
+    let baseVolume = initialVolume / 100;
     const audio = new Audio(tracks[index]);
     audio.preload = "auto";
-    audio.volume = 0.28;
+    audio.volume = baseVolume;
 
     audio.addEventListener("ended", () => {
       index = (index + 1) % tracks.length;
@@ -691,29 +800,77 @@
       }
     }
 
-    return { toggle };
+    function setVolume(nextVolume) {
+      baseVolume = clampVolume(nextVolume) / 100;
+      audio.volume = ducked ? baseVolume * 0.25 : baseVolume;
+    }
+
+    function duck(duration = 1800) {
+      ducked = true;
+      audio.volume = baseVolume * 0.25;
+      window.clearTimeout(restoreTimer);
+      restoreTimer = window.setTimeout(restore, duration);
+    }
+
+    function restore() {
+      ducked = false;
+      audio.volume = baseVolume;
+      window.clearTimeout(restoreTimer);
+    }
+
+    return { toggle, setVolume, duck, restore };
   }
 
-  function createVoicePlayer(clips) {
-    const audio = new Audio();
-    audio.preload = "auto";
-    audio.volume = 0.9;
+  function createVoicePlayer(clips, initialVolume, hooks = {}) {
+    const audios = {};
     let pendingTimer = null;
 
+    for (const [name, src] of Object.entries(clips)) {
+      const clip = new Audio(src);
+      clip.preload = "auto";
+      clip.volume = initialVolume / 100;
+      audios[name] = clip;
+    }
+
+    function stopAll() {
+      for (const clip of Object.values(audios)) {
+        clip.pause();
+        clip.currentTime = 0;
+      }
+    }
+
     function play(name, delay = 0) {
-      const src = clips[name];
-      if (!src) return;
+      const clip = audios[name];
+      if (!clip) return;
 
       window.clearTimeout(pendingTimer);
       pendingTimer = window.setTimeout(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.src = src;
-        audio.play().catch(() => {});
+        stopAll();
+        clip.currentTime = 0;
+        hooks.onStart?.();
+        clip.onended = () => hooks.onEnd?.();
+        clip.play().catch(() => {});
       }, delay);
     }
 
-    return { play };
+    function unlock() {
+      for (const clip of Object.values(audios)) {
+        clip.load();
+      }
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    }
+
+    window.addEventListener("pointerdown", unlock, { once: true });
+    window.addEventListener("keydown", unlock, { once: true });
+    function setVolume(nextVolume) {
+      const volume = clampVolume(nextVolume) / 100;
+      for (const clip of Object.values(audios)) {
+        clip.volume = volume;
+      }
+    }
+
+    return { play, setVolume };
   }
 
   playButton.addEventListener("click", playSelected);
@@ -725,6 +882,22 @@
     musicButton.setAttribute("aria-label", playing ? "Выключить музыку" : "Включить музыку");
     musicButton.setAttribute("title", playing ? "Выключить музыку" : "Включить музыку");
   });
+  settingsButton.addEventListener("click", () => {
+    sound.play("tap");
+    syncVolumeControls();
+    settingsPanel.hidden = false;
+  });
+  closeSettingsButton.addEventListener("click", () => {
+    sound.play("tap");
+    settingsPanel.hidden = true;
+  });
+  settingsPanel.addEventListener("click", (event) => {
+    if (event.target === settingsPanel) settingsPanel.hidden = true;
+  });
+  musicVolume.addEventListener("input", () => updateVolume("musicVolume", musicVolume.value));
+  voiceVolume.addEventListener("input", () => updateVolume("voiceVolume", voiceVolume.value));
+  sfxVolume.addEventListener("input", () => updateVolume("sfxVolume", sfxVolume.value));
+  vibrationToggle.addEventListener("change", () => updateVibration(vibrationToggle.checked));
   nextRoundButton.addEventListener("click", () => {
     roundPanel.classList.remove("match-result");
     modalBackdrop.hidden = true;
@@ -768,7 +941,9 @@
   });
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !rulesPanel.hidden) rulesPanel.hidden = true;
+    if (event.key === "Escape" && !settingsPanel.hidden) settingsPanel.hidden = true;
   });
 
+  syncVolumeControls();
   newMatch();
 })();
