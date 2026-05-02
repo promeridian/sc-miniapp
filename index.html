@@ -1,11 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#123229">
     <title>Скопа</title>
-    <link rel="stylesheet" href="./styles.css?v=20260501-5">
+    <link rel="stylesheet" href="./styles.css?v=20260502-10">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
@@ -29,6 +29,51 @@
         <strong id="scopaCelebrationText">Стол очищен</strong>
       </div>
     </div>
+
+    <section class="home-screen" id="homeScreen" aria-label="Главный экран">
+      <div class="home-profile">
+        <div class="avatar avatar-player">Вы</div>
+        <div>
+          <strong>Игрок</strong>
+          <span>Тренировка с ботом</span>
+        </div>
+      </div>
+      <div class="home-wallet" aria-label="Тестовые показатели">
+        <span><strong>12,450</strong></span>
+        <span><strong>320</strong></span>
+      </div>
+      <div class="home-hero">
+        <div class="home-crest" aria-hidden="true">♕</div>
+        <h1>СКОПА</h1>
+        <p>Итальянская карточная игра</p>
+        <div class="hero-cards" aria-hidden="true">
+          <img src="./assets/cards/back.png?v=20260502-06" alt="">
+          <img src="./assets/cards/spade-1.png?v=20260502-06" alt="">
+          <img src="./assets/cards/denari-7.png?v=20260502-06" alt="">
+          <img src="./assets/cards/coppe-10.png?v=20260502-06" alt="">
+          <img src="./assets/cards/bastoni-8.png?v=20260502-06" alt="">
+        </div>
+      </div>
+      <nav class="home-menu" aria-label="Меню игры">
+        <button class="home-button home-button-primary" id="quickPlayButton" type="button">
+          <strong>Играть</strong>
+          <span>Быстрая партия</span>
+        </button>
+        <button class="home-button" id="homeRulesButton" type="button">
+          <strong>Правила</strong>
+          <span>Как играть</span>
+        </button>
+        <button class="home-button" id="homeSettingsButton" type="button">
+          <strong>Настройки</strong>
+          <span>Звук и вибрация</span>
+        </button>
+      </nav>
+      <div class="home-tabs" aria-label="Быстрые ссылки">
+        <a href="https://t.me/appsmeridian_bot" target="_blank" rel="noopener">Донат</a>
+        <a href="https://t.me/+N-lQ58PBI9ZiMDJi" target="_blank" rel="noopener">Канал</a>
+        <button id="homeNewMatchButton" type="button">Новый матч</button>
+      </div>
+    </section>
 
     <main class="app-shell">
       <header class="topbar">
@@ -117,10 +162,10 @@
               <h3>Цель</h3>
               <p>Забирайте карты со стола картой из руки. Раунд идет до конца колоды, матч играется до 11 очков.</p>
               <div class="rules-card-row">
-                <img src="./assets/cards/denari-7.png" alt="7 пентаклей">
-                <img src="./assets/cards/coppe-10.png" alt="Король кубков">
-                <img src="./assets/cards/spade-1.png" alt="Туз мечей">
-                <img src="./assets/cards/bastoni-8.png" alt="Валет жезлов">
+                <img src="./assets/cards/denari-7.png?v=20260502-06" alt="7 пентаклей">
+                <img src="./assets/cards/coppe-10.png?v=20260502-06" alt="Король кубков">
+                <img src="./assets/cards/spade-1.png?v=20260502-06" alt="Туз мечей">
+                <img src="./assets/cards/bastoni-8.png?v=20260502-06" alt="Валет жезлов">
               </div>
             </article>
 
@@ -128,11 +173,11 @@
               <h3>Ход</h3>
               <p>Если на столе нет одиночной карты нужного значения, можно забрать несколько карт, сумма которых равна вашей карте.</p>
               <div class="rules-example">
-                <img src="./assets/cards/spade-9.png" alt="9 мечей">
+                <img src="./assets/cards/spade-9.png?v=20260502-06" alt="9 мечей">
                 <span>=</span>
-                <img src="./assets/cards/denari-2.png" alt="2 пентаклей">
+                <img src="./assets/cards/denari-2.png?v=20260502-06" alt="2 пентаклей">
                 <span>+</span>
-                <img src="./assets/cards/coppe-7.png" alt="7 кубков">
+                <img src="./assets/cards/coppe-7.png?v=20260502-06" alt="7 кубков">
               </div>
             </article>
 
@@ -140,9 +185,9 @@
               <h3>Важное правило</h3>
               <p>Если на столе есть одиночная карта нужного значения, нужно брать именно ее, а не комбинацию из нескольких карт.</p>
               <div class="rules-example">
-                <img src="./assets/cards/bastoni-7.png" alt="7 жезлов">
+                <img src="./assets/cards/bastoni-7.png?v=20260502-06" alt="7 жезлов">
                 <span>→</span>
-                <img src="./assets/cards/denari-7.png" alt="7 пентаклей">
+                <img src="./assets/cards/denari-7.png?v=20260502-06" alt="7 пентаклей">
               </div>
             </article>
 
@@ -153,7 +198,7 @@
                 <li>Больше пентаклей: 1 очко.</li>
                 <li>Сеттебелло, 7 пентаклей: 1 очко.</li>
                 <li>Примьера: 1 очко за лучшие карты по мастям.</li>
-                <li>Scopa: 1 очко за очистку стола.</li>
+                <li>Скопа: 1 очко за очистку стола.</li>
               </ul>
             </article>
           </div>
@@ -173,18 +218,18 @@
           <div class="settings-content">
             <label class="volume-control">
               <span>Музыка</span>
-              <input id="musicVolume" type="range" min="0" max="100" value="28">
-              <strong id="musicVolumeValue">28%</strong>
+              <input id="musicVolume" type="range" min="0" max="100" value="18">
+              <strong id="musicVolumeValue">18%</strong>
             </label>
             <label class="volume-control">
               <span>Диалоги</span>
-              <input id="voiceVolume" type="range" min="0" max="100" value="90">
-              <strong id="voiceVolumeValue">90%</strong>
+              <input id="voiceVolume" type="range" min="0" max="100" value="100">
+              <strong id="voiceVolumeValue">100%</strong>
             </label>
             <label class="volume-control">
               <span>Игровые звуки</span>
-              <input id="sfxVolume" type="range" min="0" max="100" value="70">
-              <strong id="sfxVolumeValue">70%</strong>
+              <input id="sfxVolume" type="range" min="0" max="100" value="85">
+              <strong id="sfxVolumeValue">85%</strong>
             </label>
             <label class="toggle-control">
               <span>
@@ -205,6 +250,7 @@
     </main>
     <div class="modal-backdrop" id="modalBackdrop" hidden></div>
 
-    <script src="./game.js?v=20260501-5"></script>
+    <script src="./game.js?v=20260502-10"></script>
   </body>
 </html>
+

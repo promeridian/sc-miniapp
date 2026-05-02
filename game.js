@@ -10,14 +10,22 @@
   const DONATE_URL = "https://t.me/appsmeridian_bot";
   const CHANNEL_URL = "https://t.me/+N-lQ58PBI9ZiMDJi";
   const USE_CARD_IMAGES = true;
+  const CARD_ASSET_VERSION = "20260502-06";
   const MUSIC_TRACKS = [
     "./assets/audio/cooking-with-the-italians.mp3",
     "./assets/audio/the-little-cafe.mp3"
   ];
-  const DEFAULT_AUDIO_SETTINGS = {
+  const AUDIO_SETTINGS_VERSION = 2;
+  const LEGACY_DEFAULT_AUDIO_SETTINGS = {
     musicVolume: 28,
     voiceVolume: 90,
     sfxVolume: 70,
+    vibrationEnabled: true
+  };
+  const DEFAULT_AUDIO_SETTINGS = {
+    musicVolume: 18,
+    voiceVolume: 100,
+    sfxVolume: 85,
     vibrationEnabled: true
   };
   const VOICE_CLIPS = {
@@ -43,6 +51,12 @@
   ];
   const ranks = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const rankNames = { 1: "Туз", 8: "Валет", 9: "Рыцарь", 10: "Король" };
+  const suitNamesGenitive = {
+    denari: "пентаклей",
+    coppe: "кубков",
+    spade: "мечей",
+    bastoni: "жезлов"
+  };
   const primiera = { 7: 21, 6: 18, 1: 16, 5: 15, 4: 14, 3: 13, 2: 12, 8: 10, 9: 10, 10: 10 };
 
   const playerScoreEl = document.getElementById("playerScore");
@@ -78,6 +92,11 @@
   const rulesPanel = document.getElementById("rulesPanel");
   const closeRulesButton = document.getElementById("closeRulesButton");
   const loadingScreen = document.getElementById("loadingScreen");
+  const homeScreen = document.getElementById("homeScreen");
+  const quickPlayButton = document.getElementById("quickPlayButton");
+  const homeRulesButton = document.getElementById("homeRulesButton");
+  const homeSettingsButton = document.getElementById("homeSettingsButton");
+  const homeNewMatchButton = document.getElementById("homeNewMatchButton");
   const scopaCelebration = document.getElementById("scopaCelebration");
   const scopaCelebrationText = document.getElementById("scopaCelebrationText");
   const confettiLayer = document.getElementById("confettiLayer");
@@ -200,7 +219,7 @@
   }
 
   function cardImagePath(card) {
-    return `./assets/cards/${card.suit}-${card.value}.png`;
+    return `./assets/cards/${card.suit}-${card.value}.png?v=${CARD_ASSET_VERSION}`;
   }
 
   function pipGrid(card) {
@@ -316,7 +335,7 @@
       capture("player", card, picked);
       sound.play("capture");
       triggerHaptic("capture");
-      setStatus(`Вы взяли ${picked.length + 1} карт.`, "win");
+      setStatus(`Вы взяли ${formatCardCount(picked.length + 1)}.`, "win");
     }
 
     round.selectedHandId = null;
@@ -380,7 +399,7 @@
     if (move.capture.length > 0) {
       capture("bot", card, move.capture);
       sound.play("capture");
-      setStatus(`Бот сыграл ${displayCard(card)} и взял ${move.capture.length} карт.`, "warn");
+      setStatus(`Бот сыграл ${displayCard(card)} и взял ${formatCardCount(move.capture.length)}.`, "warn");
     } else {
       round.table.push(card);
       sound.play("place");
@@ -546,7 +565,7 @@
       roundBreakdown.insertAdjacentHTML("beforeend", `<span${rowClass}>${label}</span><span${valueClass}>${player}</span><span${valueClass}>${bot}</span>`);
     }
     roundBreakdown.insertAdjacentHTML("beforeend", `
-      <div class="score-note">Числа в скобках показывают показатели этого раунда: количество пентаклей и сумму примьеры.</div>
+      <div class="score-note">Числа в скобках — данные за этот раунд: количество пентаклей и сумма примьеры.</div>
       <div class="development-note">
         <strong>Игра находится в разработке</strong>
         <span>Мы хотим добавить онлайн-режим для игры с друзьями. Поддержка донатом поможет оплатить работу серверов и сохранить игру доступной после тестовой недели.</span>
@@ -569,7 +588,19 @@
   }
 
   function displayCard(card) {
-    return `${displayRank(card)} ${card.suitName}`;
+    return `${displayRank(card).toLowerCase()} ${suitNamesGenitive[card.suit] || card.suitName.toLowerCase()}`;
+  }
+
+  function formatCardCount(count) {
+    return `${count} ${pluralizeRu(count, "карту", "карты", "карт")}`;
+  }
+
+  function pluralizeRu(count, one, few, many) {
+    const mod10 = Math.abs(count) % 10;
+    const mod100 = Math.abs(count) % 100;
+    if (mod10 === 1 && mod100 !== 11) return one;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+    return many;
   }
 
   function setStatus(text, mode) {
@@ -619,14 +650,22 @@
   function loadAudioSettings() {
     try {
       const saved = JSON.parse(localStorage.getItem("scopaAudioSettings") || "{}");
+      const migratedSavedDefaults = saved.settingsVersion !== AUDIO_SETTINGS_VERSION
+        && saved.musicVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.musicVolume
+        && saved.voiceVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.voiceVolume
+        && saved.sfxVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.sfxVolume;
+      if (migratedSavedDefaults) {
+        return { ...DEFAULT_AUDIO_SETTINGS, settingsVersion: AUDIO_SETTINGS_VERSION };
+      }
       return {
         musicVolume: clampVolume(saved.musicVolume ?? DEFAULT_AUDIO_SETTINGS.musicVolume),
         voiceVolume: clampVolume(saved.voiceVolume ?? DEFAULT_AUDIO_SETTINGS.voiceVolume),
         sfxVolume: clampVolume(saved.sfxVolume ?? DEFAULT_AUDIO_SETTINGS.sfxVolume),
-        vibrationEnabled: saved.vibrationEnabled ?? DEFAULT_AUDIO_SETTINGS.vibrationEnabled
+        vibrationEnabled: saved.vibrationEnabled ?? DEFAULT_AUDIO_SETTINGS.vibrationEnabled,
+        settingsVersion: AUDIO_SETTINGS_VERSION
       };
     } catch (error) {
-      return { ...DEFAULT_AUDIO_SETTINGS };
+      return { ...DEFAULT_AUDIO_SETTINGS, settingsVersion: AUDIO_SETTINGS_VERSION };
     }
   }
 
@@ -658,6 +697,12 @@
     if (kind === "sfxVolume") sound.setVolume(volume);
     syncVolumeControls();
     saveAudioSettings();
+  }
+
+  function bindVolumeControl(input, kind) {
+    const update = () => updateVolume(kind, input.value);
+    input.addEventListener("input", update);
+    input.addEventListener("change", update);
   }
 
   function updateVibration(enabled) {
@@ -710,7 +755,7 @@
   function createSoundEngine(initialVolume) {
     let context = null;
     let unlocked = false;
-    let volume = initialVolume / 100;
+    let volume = volumeToLevel(initialVolume);
 
     function ensureContext() {
       if (!context) {
@@ -731,7 +776,7 @@
 
     function tone(freq, start, duration, type, gainValue) {
       const audio = ensureContext();
-      if (!audio || !unlocked) return;
+      if (!audio || !unlocked || volume <= 0) return;
       const osc = audio.createOscillator();
       const gain = audio.createGain();
       osc.type = type || "sine";
@@ -762,7 +807,7 @@
     window.addEventListener("pointerdown", unlock, { once: true });
     window.addEventListener("keydown", unlock, { once: true });
     function setVolume(nextVolume) {
-      volume = clampVolume(nextVolume) / 100;
+      volume = volumeToLevel(nextVolume);
     }
 
     return { play, setVolume };
@@ -773,10 +818,10 @@
     let enabled = false;
     let ducked = false;
     let restoreTimer = null;
-    let baseVolume = initialVolume / 100;
+    let baseVolume = volumeToLevel(initialVolume);
     const audio = new Audio(tracks[index]);
     audio.preload = "auto";
-    audio.volume = baseVolume;
+    applyMusicVolume();
 
     audio.addEventListener("ended", () => {
       index = (index + 1) % tracks.length;
@@ -801,21 +846,27 @@
     }
 
     function setVolume(nextVolume) {
-      baseVolume = clampVolume(nextVolume) / 100;
-      audio.volume = ducked ? baseVolume * 0.25 : baseVolume;
+      baseVolume = volumeToLevel(nextVolume);
+      applyMusicVolume();
     }
 
     function duck(duration = 1800) {
       ducked = true;
-      audio.volume = baseVolume * 0.25;
+      applyMusicVolume();
       window.clearTimeout(restoreTimer);
       restoreTimer = window.setTimeout(restore, duration);
     }
 
     function restore() {
       ducked = false;
-      audio.volume = baseVolume;
+      applyMusicVolume();
       window.clearTimeout(restoreTimer);
+    }
+
+    function applyMusicVolume() {
+      const nextVolume = ducked ? baseVolume * 0.25 : baseVolume;
+      audio.volume = Math.max(0, Math.min(1, nextVolume));
+      audio.muted = baseVolume <= 0;
     }
 
     return { toggle, setVolume, duck, restore };
@@ -824,11 +875,13 @@
   function createVoicePlayer(clips, initialVolume, hooks = {}) {
     const audios = {};
     let pendingTimer = null;
+    let volume = volumeToLevel(initialVolume);
 
     for (const [name, src] of Object.entries(clips)) {
       const clip = new Audio(src);
       clip.preload = "auto";
-      clip.volume = initialVolume / 100;
+      clip.volume = volume;
+      clip.muted = volume <= 0;
       audios[name] = clip;
     }
 
@@ -847,6 +900,8 @@
       pendingTimer = window.setTimeout(() => {
         stopAll();
         clip.currentTime = 0;
+        clip.volume = volume;
+        clip.muted = volume <= 0;
         hooks.onStart?.();
         clip.onended = () => hooks.onEnd?.();
         clip.play().catch(() => {});
@@ -864,13 +919,20 @@
     window.addEventListener("pointerdown", unlock, { once: true });
     window.addEventListener("keydown", unlock, { once: true });
     function setVolume(nextVolume) {
-      const volume = clampVolume(nextVolume) / 100;
+      volume = volumeToLevel(nextVolume);
       for (const clip of Object.values(audios)) {
         clip.volume = volume;
+        clip.muted = volume <= 0;
       }
     }
 
     return { play, setVolume };
+  }
+
+  function volumeToLevel(value) {
+    const normalized = clampVolume(value) / 100;
+    if (normalized <= 0) return 0;
+    return Math.min(1, normalized);
   }
 
   playButton.addEventListener("click", playSelected);
@@ -894,9 +956,9 @@
   settingsPanel.addEventListener("click", (event) => {
     if (event.target === settingsPanel) settingsPanel.hidden = true;
   });
-  musicVolume.addEventListener("input", () => updateVolume("musicVolume", musicVolume.value));
-  voiceVolume.addEventListener("input", () => updateVolume("voiceVolume", voiceVolume.value));
-  sfxVolume.addEventListener("input", () => updateVolume("sfxVolume", sfxVolume.value));
+  bindVolumeControl(musicVolume, "musicVolume");
+  bindVolumeControl(voiceVolume, "voiceVolume");
+  bindVolumeControl(sfxVolume, "sfxVolume");
   vibrationToggle.addEventListener("change", () => updateVibration(vibrationToggle.checked));
   nextRoundButton.addEventListener("click", () => {
     roundPanel.classList.remove("match-result");
@@ -905,6 +967,34 @@
     else startRound();
   });
   newMatchButton.addEventListener("click", newMatch);
+  quickPlayButton.addEventListener("click", () => {
+    sound.play("tap");
+    homeScreen.classList.add("hidden");
+  });
+  homeRulesButton.addEventListener("click", () => {
+    sound.play("tap");
+    rulesPanel.hidden = false;
+  });
+  homeSettingsButton.addEventListener("click", () => {
+    sound.play("tap");
+    syncVolumeControls();
+    settingsPanel.hidden = false;
+  });
+  homeNewMatchButton.addEventListener("click", () => {
+    newMatch();
+    homeScreen.classList.add("hidden");
+  });
+  homeScreen.addEventListener("pointermove", (event) => {
+    const rect = homeScreen.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    homeScreen.style.setProperty("--hero-drift-x", `${(x * 18).toFixed(1)}px`);
+    homeScreen.style.setProperty("--hero-drift-y", `${(y * 12).toFixed(1)}px`);
+  });
+  homeScreen.addEventListener("pointerleave", () => {
+    homeScreen.style.setProperty("--hero-drift-x", "0px");
+    homeScreen.style.setProperty("--hero-drift-y", "0px");
+  });
   channelButton.addEventListener("click", (event) => {
     event.preventDefault();
     const popup = window.open(CHANNEL_URL, "_blank", "noopener,noreferrer");
