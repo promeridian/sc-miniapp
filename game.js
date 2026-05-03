@@ -10,7 +10,7 @@
   const DONATE_URL = "https://t.me/appsmeridian_bot?start=dl-1777825418218";
   const CHANNEL_URL = "https://t.me/+N-lQ58PBI9ZiMDJi";
   const USE_CARD_IMAGES = true;
-  const CARD_ASSET_VERSION = "20260503-52";
+  const CARD_ASSET_VERSION = "20260503-53";
   const MUSIC_TRACKS = [
     "./assets/audio/cooking-with-the-italians.mp3",
     "./assets/audio/the-little-cafe.mp3"

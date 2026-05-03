@@ -19,20 +19,20 @@
   --blue: #276a8b;
   --shadow: 0 16px 34px rgba(0, 0, 0, 0.48);
   --gold-border: 1px solid rgba(232, 189, 98, 0.42);
-  --felt-texture: url("./assets/felt-bg.png?v=20260503-52");
-  --wood-panel-bot: url("./assets/wood-panel-bot.png?v=20260503-52");
-  --wood-panel-player: url("./assets/wood-panel-player.png?v=20260503-52");
-  --top-wood-panel: url("./assets/ui/top-wood-panel.png?v=20260503-52");
-  --scopa-medal: url("./assets/ui/scopa-medal.png?v=20260503-52");
-  --counter-badge: url("./assets/ui/counter-badge.png?v=20260503-52");
-  --scopa-logo: url("./assets/ui/scopa-logo.png?v=20260503-52");
-  --rules-card-art: url("./assets/ui/rules-card.png?v=20260503-52");
-  --action-button: url("./assets/ui/action-button.png?v=20260503-52");
-  --action-button-active: url("./assets/ui/action-button-active.png?v=20260503-52");
-  --home-bg: url("./assets/ui/home-bg.png?v=20260503-52");
-  --home-logo: url("./assets/ui/home-logo.png?v=20260503-52");
-  --home-bottom-panel: url("./assets/ui/home-bottom-panel.png?v=20260503-52");
-  --home-bottom-panel-mini: url("./assets/ui/home-bottom-panel-mini.png?v=20260503-52");
+  --felt-texture: url("./assets/felt-bg.png?v=20260503-53");
+  --wood-panel-bot: url("./assets/wood-panel-bot.png?v=20260503-53");
+  --wood-panel-player: url("./assets/wood-panel-player.png?v=20260503-53");
+  --top-wood-panel: url("./assets/ui/top-wood-panel.png?v=20260503-53");
+  --scopa-medal: url("./assets/ui/scopa-medal.png?v=20260503-53");
+  --counter-badge: url("./assets/ui/counter-badge.png?v=20260503-53");
+  --scopa-logo: url("./assets/ui/scopa-logo.png?v=20260503-53");
+  --rules-card-art: url("./assets/ui/rules-card.png?v=20260503-53");
+  --action-button: url("./assets/ui/action-button.png?v=20260503-53");
+  --action-button-active: url("./assets/ui/action-button-active.png?v=20260503-53");
+  --home-bg: url("./assets/ui/home-bg.png?v=20260503-53");
+  --home-logo: url("./assets/ui/home-logo.png?v=20260503-53");
+  --home-bottom-panel: url("./assets/ui/home-bottom-panel.png?v=20260503-53");
+  --home-bottom-panel-mini: url("./assets/ui/home-bottom-panel-mini.png?v=20260503-53");
   --card-art-ratio: 894 / 1350;
   --card-radius: 0;
   --table-card-radius: 0;
@@ -237,7 +237,7 @@ button {
   border: 2px solid #d4c6a2;
   border-radius: 6px;
   background:
-    url("./assets/cards/back.png?v=20260503-52") center / cover,
+    url("./assets/cards/back.png?v=20260503-53") center / cover,
     repeating-linear-gradient(45deg, #7b2f29 0 6px, #5f211d 6px 12px);
   box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
   animation: shuffle-card 1.1s ease-in-out infinite;
@@ -1279,7 +1279,7 @@ h2 {
   border-radius: 10px;
   border: 2px solid #c9a456;
   background:
-    url("./assets/cards/back.png?v=20260503-52") center / contain no-repeat,
+    url("./assets/cards/back.png?v=20260503-53") center / contain no-repeat,
     radial-gradient(circle at center, rgba(241, 189, 77, 0.36) 0 16%, transparent 17%),
     repeating-linear-gradient(45deg, #7b2f29 0 6px, #5f211d 6px 12px);
   box-shadow: var(--shadow);
@@ -1374,6 +1374,7 @@ h2 {
   padding: 8px 4px 0;
   margin-top: 0;
   flex: 1 1 auto;
+  transform: translateY(-14px);
 }
 
 .hand-zone {
