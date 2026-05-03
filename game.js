@@ -10,7 +10,7 @@
   const DONATE_URL = "https://t.me/appsmeridian_bot?start=dl-1777825418218";
   const CHANNEL_URL = "https://t.me/+N-lQ58PBI9ZiMDJi";
   const USE_CARD_IMAGES = true;
-  const CARD_ASSET_VERSION = "20260503-43";
+  const CARD_ASSET_VERSION = "20260503-52";
   const MUSIC_TRACKS = [
     "./assets/audio/cooking-with-the-italians.mp3",
     "./assets/audio/the-little-cafe.mp3"
@@ -726,7 +726,7 @@
     const botLeft = Math.max(0, 11 - match.scores.bot);
     const roundSummary = isMatchOver
       ? `<div class="match-summary"><span>Итоговый счет</span><strong>${match.scores.player}:${match.scores.bot}</strong></div>`
-      : `<div class="match-summary"><span>Счет матча</span><strong>${match.scores.player}:${match.scores.bot}</strong><em>До победы: вам ${playerLeft}, боту ${botLeft}</em></div>`;
+      : `<div class="match-summary"><span>Счет матча</span><strong>${match.scores.player}:${match.scores.bot}</strong><em>До победы: вам — ${playerLeft}, боту — ${botLeft}</em></div>`;
     roundBreakdown.innerHTML = isMatchOver
       ? `${roundSummary}<span class="round-head-spacer"></span><strong class="round-player-head">Вы</strong><strong class="round-bot-head">Бот</strong>`
       : `${roundSummary}<span class="round-head-spacer"></span><strong class="round-player-head">Вы</strong><strong class="round-bot-head">Бот</strong>`;

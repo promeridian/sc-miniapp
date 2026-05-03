@@ -19,20 +19,20 @@
   --blue: #276a8b;
   --shadow: 0 16px 34px rgba(0, 0, 0, 0.48);
   --gold-border: 1px solid rgba(232, 189, 98, 0.42);
-  --felt-texture: url("./assets/felt-bg.png?v=20260503-43");
-  --wood-panel-bot: url("./assets/wood-panel-bot.png?v=20260503-43");
-  --wood-panel-player: url("./assets/wood-panel-player.png?v=20260503-43");
-  --top-wood-panel: url("./assets/ui/top-wood-panel.png?v=20260503-43");
-  --scopa-medal: url("./assets/ui/scopa-medal.png?v=20260503-43");
-  --counter-badge: url("./assets/ui/counter-badge.png?v=20260503-43");
-  --scopa-logo: url("./assets/ui/scopa-logo.png?v=20260503-43");
-  --rules-card-art: url("./assets/ui/rules-card.png?v=20260503-43");
-  --action-button: url("./assets/ui/action-button.png?v=20260503-43");
-  --action-button-active: url("./assets/ui/action-button-active.png?v=20260503-43");
-  --home-bg: url("./assets/ui/home-bg.png?v=20260503-43");
-  --home-logo: url("./assets/ui/home-logo.png?v=20260503-43");
-  --home-bottom-panel: url("./assets/ui/home-bottom-panel.png?v=20260503-43");
-  --home-bottom-panel-mini: url("./assets/ui/home-bottom-panel-mini.png?v=20260503-43");
+  --felt-texture: url("./assets/felt-bg.png?v=20260503-52");
+  --wood-panel-bot: url("./assets/wood-panel-bot.png?v=20260503-52");
+  --wood-panel-player: url("./assets/wood-panel-player.png?v=20260503-52");
+  --top-wood-panel: url("./assets/ui/top-wood-panel.png?v=20260503-52");
+  --scopa-medal: url("./assets/ui/scopa-medal.png?v=20260503-52");
+  --counter-badge: url("./assets/ui/counter-badge.png?v=20260503-52");
+  --scopa-logo: url("./assets/ui/scopa-logo.png?v=20260503-52");
+  --rules-card-art: url("./assets/ui/rules-card.png?v=20260503-52");
+  --action-button: url("./assets/ui/action-button.png?v=20260503-52");
+  --action-button-active: url("./assets/ui/action-button-active.png?v=20260503-52");
+  --home-bg: url("./assets/ui/home-bg.png?v=20260503-52");
+  --home-logo: url("./assets/ui/home-logo.png?v=20260503-52");
+  --home-bottom-panel: url("./assets/ui/home-bottom-panel.png?v=20260503-52");
+  --home-bottom-panel-mini: url("./assets/ui/home-bottom-panel-mini.png?v=20260503-52");
   --card-art-ratio: 894 / 1350;
   --card-radius: 0;
   --table-card-radius: 0;
@@ -237,7 +237,7 @@ button {
   border: 2px solid #d4c6a2;
   border-radius: 6px;
   background:
-    url("./assets/cards/back.png?v=20260503-43") center / cover,
+    url("./assets/cards/back.png?v=20260503-52") center / cover,
     repeating-linear-gradient(45deg, #7b2f29 0 6px, #5f211d 6px 12px);
   box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
   animation: shuffle-card 1.1s ease-in-out infinite;
@@ -626,7 +626,10 @@ button {
   overflow: hidden;
 }
 
-.home-screen::before,
+.home-screen::before {
+  content: none;
+}
+
 .home-screen::after {
   content: none;
 }
@@ -642,42 +645,34 @@ button {
 .home-logo,
 .home-start-menu,
 .home-dock {
-  position: relative;
   z-index: 1;
 }
 
 .home-logo {
+  position: absolute;
+  left: 50%;
+  top: max(72px, env(safe-area-inset-top));
   width: min(96vw, 500px);
   height: auto;
-  justify-self: center;
-  margin: 0 auto;
   object-fit: contain;
   object-position: center;
+  transform: translateX(-50%);
   filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.62));
 }
 
 .home-start-menu {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  bottom: max(128px, calc(env(safe-area-inset-bottom) + 128px));
   width: min(92vw, 430px);
-  margin: auto auto 106px;
-  justify-self: center;
   display: grid;
   justify-items: center;
   gap: 12px;
-  transform: translateY(-28px);
+  transform: translate(-50%, -28px);
 }
 
 .home-start-menu::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 58px;
-  z-index: -1;
-  width: min(128vw, 620px);
-  height: min(62.6vw, 303px);
-  background: var(--home-bottom-panel) center top / 100% 100% no-repeat;
-  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.5));
-  transform: translateX(-50%);
+  content: none;
 }
 
 .home-play-button,
@@ -720,17 +715,23 @@ button {
 .home-dock {
   position: absolute;
   left: 50%;
-  bottom: max(12px, env(safe-area-inset-bottom));
+  bottom: max(34px, calc(env(safe-area-inset-bottom) + 34px));
   width: min(84vw, 380px);
-  min-height: 116px;
-  padding: 37px 42px 22px;
+  min-height: 106px;
+  padding: 24px 20px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   align-items: center;
   justify-items: center;
   gap: 12px;
-  background: var(--home-bottom-panel-mini) center / 100% 100% no-repeat;
-  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+  border: 1px solid rgba(255, 229, 161, 0.34);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(6, 30, 22, 0.16), rgba(4, 14, 10, 0.42));
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.22),
+    inset 0 12px 24px rgba(255, 232, 163, 0.04),
+    0 14px 28px rgba(0, 0, 0, 0.22);
+  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.34));
   transform: translateX(-50%);
 }
 
@@ -948,18 +949,6 @@ button {
   line-height: 1;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.72);
   transform: rotate(-11deg);
-}
-
-.top-logo {
-  position: absolute;
-  left: 50%;
-  top: 52px;
-  z-index: 1;
-  width: min(48vw, 260px);
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.58));
-  transform: translateX(-50%);
 }
 
 .eyebrow,
@@ -1277,7 +1266,11 @@ h2 {
 }
 
 .player-counter {
-  margin-left: auto;
+  position: absolute;
+  right: 18px;
+  top: -38px;
+  z-index: 4;
+  margin: 0;
 }
 
 .card-back {
@@ -1286,7 +1279,7 @@ h2 {
   border-radius: 10px;
   border: 2px solid #c9a456;
   background:
-    url("./assets/cards/back.png?v=20260503-43") center / contain no-repeat,
+    url("./assets/cards/back.png?v=20260503-52") center / contain no-repeat,
     radial-gradient(circle at center, rgba(241, 189, 77, 0.36) 0 16%, transparent 17%),
     repeating-linear-gradient(45deg, #7b2f29 0 6px, #5f211d 6px 12px);
   box-shadow: var(--shadow);
@@ -1419,12 +1412,14 @@ h2 {
 
 .player-avatar-ui {
   left: 18px;
-  top: 36px;
+  top: -38px;
+  z-index: 4;
 }
 
 .player-avatar-counter {
   left: 68px;
-  top: 34px;
+  top: -40px;
+  z-index: 5;
 }
 
 .card {
@@ -2107,7 +2102,7 @@ h2 {
 .status {
   min-height: 48px;
   margin: 6px 0 0;
-  padding: 11px 12px;
+  padding: 7px 12px 15px;
   border: var(--gold-border);
   border-radius: 14px;
   background: transparent;
