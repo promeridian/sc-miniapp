@@ -1,8 +1,14 @@
 # Local/private working files
 video_frames/
+backups/
+project_backups/
 
 # Temporary generated previews
 assets/cards/_contact_sheet.jpg
+assets/cards/_incoming_denari/
+assets/cards/_incoming_full_deck/
+assets/cards/_incoming_card_rar/
+assets/cards/backup-denari-*/
 
 # Secrets and local environment files
 .env

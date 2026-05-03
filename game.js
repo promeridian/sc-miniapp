@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   "use strict";
 
   const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -7,15 +7,15 @@
     tg.expand();
   }
 
-  const DONATE_URL = "https://t.me/appsmeridian_bot";
+  const DONATE_URL = "https://t.me/appsmeridian_bot?start=dl-1777825418218";
   const CHANNEL_URL = "https://t.me/+N-lQ58PBI9ZiMDJi";
   const USE_CARD_IMAGES = true;
-  const CARD_ASSET_VERSION = "20260502-06";
+  const CARD_ASSET_VERSION = "20260503-42";
   const MUSIC_TRACKS = [
     "./assets/audio/cooking-with-the-italians.mp3",
     "./assets/audio/the-little-cafe.mp3"
   ];
-  const AUDIO_SETTINGS_VERSION = 2;
+  const AUDIO_SETTINGS_VERSION = 4;
   const LEGACY_DEFAULT_AUDIO_SETTINGS = {
     musicVolume: 28,
     voiceVolume: 90,
@@ -23,17 +23,138 @@
     vibrationEnabled: true
   };
   const DEFAULT_AUDIO_SETTINGS = {
-    musicVolume: 18,
-    voiceVolume: 100,
-    sfxVolume: 85,
+    musicVolume: 9,
+    voiceVolume: 65,
+    sfxVolume: 50,
     vibrationEnabled: true
   };
+  const VOLUME_LIMITS = {
+    musicVolume: 100,
+    voiceVolume: 100,
+    sfxVolume: 100
+  };
   const VOICE_CLIPS = {
-    scopaPlayer: "./assets/audio/voice/scopa-player.mp3",
-    scopaBot: "./assets/audio/voice/scopa-bot.mp3",
-    invalidMove: "./assets/audio/voice/invalid-move.mp3",
-    mustTakeSingle: "./assets/audio/voice/must-take-single.mp3",
-    settebello: "./assets/audio/voice/settebello.mp3"
+    scopaPlayer: [
+      "./assets/audio/voice/player-scopa01.mp3",
+      "./assets/audio/voice/player-scopa02.mp3",
+      "./assets/audio/voice/player-scopa03.mp3",
+      "./assets/audio/voice/player-scopa04.mp3",
+      "./assets/audio/voice/player-scopa05.mp3",
+      "./assets/audio/voice/player-scopa06.mp3",
+      "./assets/audio/voice/player-scopa07.mp3",
+      "./assets/audio/voice/player-scopa08.mp3",
+      "./assets/audio/voice/player-scopa09.mp3",
+      "./assets/audio/voice/player-scopa10.mp3",
+      "./assets/audio/voice/player-scopa11.mp3",
+      "./assets/audio/voice/player-scopa12.mp3"
+    ],
+    scopaBot: [
+      "./assets/audio/voice/bot-scopa00.mp3",
+      "./assets/audio/voice/bot-scopa01.mp3",
+      "./assets/audio/voice/bot-scopa02.mp3",
+      "./assets/audio/voice/bot-scopa03.mp3",
+      "./assets/audio/voice/bot-scopa04.mp3",
+      "./assets/audio/voice/bot-scopa05.mp3",
+      "./assets/audio/voice/bot-scopa06.mp3",
+      "./assets/audio/voice/bot-scopa07.mp3",
+      "./assets/audio/voice/bot-scopa08.mp3",
+      "./assets/audio/voice/bot-scopa09.mp3",
+      "./assets/audio/voice/bot-scopa10.mp3",
+      "./assets/audio/voice/bot-scopa11.mp3",
+      "./assets/audio/voice/bot-scopa12.mp3",
+      "./assets/audio/voice/bot-scopa13.mp3",
+      "./assets/audio/voice/bot-scopa14.mp3",
+      "./assets/audio/voice/bot-scopa15.mp3",
+      "./assets/audio/voice/bot-scopa16.mp3"
+    ],
+    invalidMove: [
+      "./assets/audio/voice/player-error01.mp3",
+      "./assets/audio/voice/player-error02.mp3",
+      "./assets/audio/voice/player-error03.mp3",
+      "./assets/audio/voice/player-error04.mp3",
+      "./assets/audio/voice/player-error05.mp3",
+      "./assets/audio/voice/player-error06.mp3",
+      "./assets/audio/voice/player-error07.mp3",
+      "./assets/audio/voice/player-error08.mp3",
+      "./assets/audio/voice/player-error09.mp3",
+      "./assets/audio/voice/player-error10.mp3",
+      "./assets/audio/voice/player-error11.mp3",
+      "./assets/audio/voice/player-error12.mp3",
+      "./assets/audio/voice/player-error13.mp3",
+      "./assets/audio/voice/player-error14.mp3",
+      "./assets/audio/voice/player-error15.mp3",
+      "./assets/audio/voice/player-error16.mp3",
+      "./assets/audio/voice/player-error17.mp3",
+      "./assets/audio/voice/player-error18.mp3",
+      "./assets/audio/voice/player-error19.mp3"
+    ],
+    mustTakeSingle: [
+      "./assets/audio/voice/player-card-no-sum01.mp3",
+      "./assets/audio/voice/player-card-no-sum02.mp3",
+      "./assets/audio/voice/player-card-no-sum03.mp3",
+      "./assets/audio/voice/player-card-no-sum04.mp3",
+      "./assets/audio/voice/player-card-no-sum05.mp3",
+      "./assets/audio/voice/player-card-no-sum06.mp3",
+      "./assets/audio/voice/player-card-no-sum07.mp3"
+    ],
+    settebello: [
+      "./assets/audio/voice/settebello01.mp3",
+      "./assets/audio/voice/settebello02.mp3",
+      "./assets/audio/voice/settebello03.mp3",
+      "./assets/audio/voice/settebello04.mp3",
+      "./assets/audio/voice/settebello05.mp3",
+      "./assets/audio/voice/settebello06.mp3",
+      "./assets/audio/voice/settebello07.mp3",
+      "./assets/audio/voice/settebello08.mp3",
+      "./assets/audio/voice/settebello09.mp3",
+      "./assets/audio/voice/settebello10.mp3"
+    ],
+    roundWinPlayer: [
+      "./assets/audio/voice/round-win-player01.mp3",
+      "./assets/audio/voice/round-win-player02.mp3",
+      "./assets/audio/voice/round-win-player03.mp3",
+      "./assets/audio/voice/round-win-player04.mp3",
+      "./assets/audio/voice/round-win-player05.mp3",
+      "./assets/audio/voice/round-win-player06.mp3",
+      "./assets/audio/voice/round-win-player07.mp3",
+      "./assets/audio/voice/round-win-player08.mp3"
+    ],
+    roundWinBot: [
+      "./assets/audio/voice/round-win-bot01.mp3",
+      "./assets/audio/voice/round-win-bot02.mp3",
+      "./assets/audio/voice/round-win-bot03.mp3",
+      "./assets/audio/voice/round-win-bot04.mp3",
+      "./assets/audio/voice/round-win-bot05.mp3",
+      "./assets/audio/voice/round-win-bot06.mp3",
+      "./assets/audio/voice/round-win-bot07.mp3",
+      "./assets/audio/voice/round-win-bot08.mp3"
+    ],
+    matchWinPlayer: [
+      "./assets/audio/voice/match-win-player01.mp3",
+      "./assets/audio/voice/match-win-player02.mp3",
+      "./assets/audio/voice/match-win-player03.mp3",
+      "./assets/audio/voice/match-win-player04.mp3",
+      "./assets/audio/voice/match-win-player05.mp3",
+      "./assets/audio/voice/match-win-player06.mp3",
+      "./assets/audio/voice/match-win-player07.mp3",
+      "./assets/audio/voice/match-win-player08.mp3",
+      "./assets/audio/voice/match-win-player09.mp3",
+      "./assets/audio/voice/match-win-player10.mp3"
+    ],
+    matchLosePlayer: [
+      "./assets/audio/voice/match-lose-player01.mp3",
+      "./assets/audio/voice/match-lose-player02.mp3",
+      "./assets/audio/voice/match-lose-player03.mp3",
+      "./assets/audio/voice/match-lose-player04.mp3",
+      "./assets/audio/voice/match-lose-player05.mp3",
+      "./assets/audio/voice/match-lose-player06.mp3",
+      "./assets/audio/voice/match-lose-player07.mp3",
+      "./assets/audio/voice/match-lose-player08.mp3"
+    ],
+    dealChatterRare: [
+      "./assets/audio/voice/deal-chatter-rare01.mp3",
+      "./assets/audio/voice/deal-chatter-rare02.mp3"
+    ]
   };
   const audioSettings = loadAudioSettings();
   const sound = createSoundEngine(audioSettings.sfxVolume);
@@ -44,10 +165,10 @@
   });
 
   const suits = [
-    { id: "denari", name: "Пентакли", icon: "●" },
-    { id: "coppe", name: "Кубки", icon: "♥" },
-    { id: "spade", name: "Мечи", icon: "♠" },
-    { id: "bastoni", name: "Жезлы", icon: "♣" }
+    { id: "denari", name: "Пентакли", icon: "?" },
+    { id: "coppe", name: "Кубки", icon: "¦" },
+    { id: "spade", name: "Мечи", icon: "¦" },
+    { id: "bastoni", name: "Жезлы", icon: "¦" }
   ];
   const ranks = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const rankNames = { 1: "Туз", 8: "Валет", 9: "Рыцарь", 10: "Король" };
@@ -62,6 +183,8 @@
   const playerScoreEl = document.getElementById("playerScore");
   const appShell = document.querySelector(".app-shell");
   const botScoreEl = document.getElementById("botScore");
+  const playerAvatarCounter = document.getElementById("playerAvatarCounter");
+  const botAvatarCounter = document.getElementById("botAvatarCounter");
   const deckCountEl = document.getElementById("deckCount");
   const botHandEl = document.getElementById("botHand");
   const playerScopaEl = document.getElementById("playerScopa");
@@ -75,10 +198,15 @@
   const roundBreakdown = document.getElementById("roundBreakdown");
   const nextRoundButton = document.getElementById("nextRoundButton");
   const newMatchButton = document.getElementById("newMatchButton");
+  const backHomeButton = document.getElementById("backHomeButton");
   const musicButton = document.getElementById("musicButton");
   const settingsButton = document.getElementById("settingsButton");
   const settingsPanel = document.getElementById("settingsPanel");
   const closeSettingsButton = document.getElementById("closeSettingsButton");
+  const developersPanel = document.getElementById("developersPanel");
+  const closeDevelopersButton = document.getElementById("closeDevelopersButton");
+  const supportFeaturePanel = document.getElementById("supportFeaturePanel");
+  const closeSupportFeatureButton = document.getElementById("closeSupportFeatureButton");
   const musicVolume = document.getElementById("musicVolume");
   const voiceVolume = document.getElementById("voiceVolume");
   const sfxVolume = document.getElementById("sfxVolume");
@@ -89,14 +217,20 @@
   const channelButton = document.getElementById("channelButton");
   const donateButton = document.getElementById("donateButton");
   const rulesButton = document.getElementById("rulesButton");
+  const topRulesCardButton = document.getElementById("topRulesCardButton");
   const rulesPanel = document.getElementById("rulesPanel");
   const closeRulesButton = document.getElementById("closeRulesButton");
   const loadingScreen = document.getElementById("loadingScreen");
   const homeScreen = document.getElementById("homeScreen");
   const quickPlayButton = document.getElementById("quickPlayButton");
+  const homeChannelButton = document.getElementById("homeChannelButton");
   const homeRulesButton = document.getElementById("homeRulesButton");
+  const homeSoundButton = document.getElementById("homeSoundButton");
   const homeSettingsButton = document.getElementById("homeSettingsButton");
   const homeNewMatchButton = document.getElementById("homeNewMatchButton");
+  const homeOnlineButton = document.getElementById("homeOnlineButton");
+  const homeFriendButton = document.getElementById("homeFriendButton");
+  const homeDevelopersButton = document.getElementById("homeDevelopersButton");
   const scopaCelebration = document.getElementById("scopaCelebration");
   const scopaCelebrationText = document.getElementById("scopaCelebrationText");
   const confettiLayer = document.getElementById("confettiLayer");
@@ -156,13 +290,17 @@
     roundPanel.hidden = true;
     setStatus("Выберите карту. Для взятки отметьте карты на столе с такой же суммой.", "");
     render();
+    preloadRoundImages();
     hideLoading();
+    if (Math.random() < 0.18) voice.play("dealChatterRare", 700);
   }
 
   function render() {
     const round = match.round;
     playerScoreEl.textContent = String(match.scores.player);
     botScoreEl.textContent = String(match.scores.bot);
+    playerAvatarCounter.textContent = String(match.scores.player);
+    botAvatarCounter.textContent = String(match.scores.bot);
     deckCountEl.textContent = String(round.deck.length);
     playerScopaEl.textContent = String(round.scope.player);
     botScopaEl.textContent = String(round.scope.bot);
@@ -202,7 +340,7 @@
     button.setAttribute("aria-label", `${displayRank(card)} ${card.suitName}`);
     if (USE_CARD_IMAGES) {
       button.classList.add("card-image-button");
-      button.innerHTML = `<img class="card-image" src="${cardImagePath(card)}" alt="">`;
+      button.innerHTML = `<img class="card-image" src="${cardImagePath(card)}" alt="" loading="eager" decoding="async">`;
     } else {
       button.innerHTML = `
         <span class="card-corner card-corner-top"><span>${card.rank}</span><span>${card.icon}</span></span>
@@ -220,6 +358,32 @@
 
   function cardImagePath(card) {
     return `./assets/cards/${card.suit}-${card.value}.png?v=${CARD_ASSET_VERSION}`;
+  }
+
+  function preloadRoundImages() {
+    if (!USE_CARD_IMAGES || !match || !match.round) return;
+    const round = match.round;
+    const cards = [...round.deck, ...round.table, ...round.playerHand, ...round.botHand];
+    for (const card of cards) preloadImage(cardImagePath(card));
+    preloadImage(`./assets/cards/back.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/felt-bg.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/wood-panel-bot.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/wood-panel-player.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/ui/top-wood-panel.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/ui/bot-avatar.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/ui/player-avatar.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/ui/scopa-medal.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/ui/counter-badge.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/ui/scopa-logo.png?v=${CARD_ASSET_VERSION}`);
+    preloadImage(`./assets/ui/rules-card.png?v=${CARD_ASSET_VERSION}`);
+  }
+
+  function preloadImage(src) {
+    if (!src) return;
+    const image = new Image();
+    image.decoding = "async";
+    image.src = src;
+    if (typeof image.decode === "function") image.decode().catch(() => {});
   }
 
   function pipGrid(card) {
@@ -292,6 +456,7 @@
 
   function playSelected() {
     const round = match.round;
+    clearCardSelectionDom();
     const card = removeById(round.playerHand, round.selectedHandId);
     if (!card) return;
 
@@ -322,7 +487,8 @@
       round.playerHand.push(card);
       sound.play("warn");
       triggerHaptic("error");
-      setStatus("Эта карта может взять со стола, сбросить ее нельзя.", "warn");
+      voice.play("invalidMove");
+      setStatus("Эта карта может быть сыграна, сбросить ее нельзя!", "warn");
       render();
       return;
     }
@@ -387,6 +553,7 @@
     sound.play("deal");
     setStatus("Новая сдача. Ваш ход.", "");
     round.turn = "player";
+    preloadRoundImages();
     render();
   }
 
@@ -481,8 +648,12 @@
       sound.play("victory");
       showScopaCelebration("victory");
       triggerRareImpact("victory");
+      voice.play("matchWinPlayer", 800);
     } else {
       sound.play("round");
+      if (isMatchOver) voice.play("matchLosePlayer", 800);
+      else if (result.player.total > result.bot.total) voice.play("roundWinPlayer", 600);
+      else if (result.bot.total > result.player.total) voice.play("roundWinBot", 600);
     }
     setStatus(match.scores.player >= 11 || match.scores.bot >= 11 ? "Матч завершен. Можно начать новый." : "Раунд завершен.", "win");
     render();
@@ -557,18 +728,19 @@
       ? `<div class="match-summary"><span>Итоговый счет</span><strong>${match.scores.player}:${match.scores.bot}</strong></div>`
       : `<div class="match-summary"><span>Счет матча</span><strong>${match.scores.player}:${match.scores.bot}</strong><em>До победы: вам ${playerLeft}, боту ${botLeft}</em></div>`;
     roundBreakdown.innerHTML = isMatchOver
-      ? `${roundSummary}<span></span><strong>Вы</strong><strong>Бот</strong>`
-      : `${roundSummary}<span></span><strong>Вы</strong><strong>Бот</strong>`;
+      ? `${roundSummary}<span class="round-head-spacer"></span><strong class="round-player-head">Вы</strong><strong class="round-bot-head">Бот</strong>`
+      : `${roundSummary}<span class="round-head-spacer"></span><strong class="round-player-head">Вы</strong><strong class="round-bot-head">Бот</strong>`;
     for (const [label, player, bot, kind] of rows) {
-      const rowClass = kind === "total" ? " class=\"round-total-label\"" : "";
-      const valueClass = kind === "total" ? " class=\"round-total-value\"" : "";
-      roundBreakdown.insertAdjacentHTML("beforeend", `<span${rowClass}>${label}</span><span${valueClass}>${player}</span><span${valueClass}>${bot}</span>`);
+      const labelClass = kind === "total" ? "round-label round-total-label" : "round-label";
+      const playerClass = kind === "total" ? "round-score-value round-player-value round-total-value" : "round-score-value round-player-value";
+      const botClass = kind === "total" ? "round-score-value round-bot-value round-total-value" : "round-score-value round-bot-value";
+      roundBreakdown.insertAdjacentHTML("beforeend", `<span class="${labelClass}">${label}</span><span class="${playerClass}">${player}</span><span class="${botClass}">${bot}</span>`);
     }
     roundBreakdown.insertAdjacentHTML("beforeend", `
       <div class="score-note">Числа в скобках — данные за этот раунд: количество пентаклей и сумма примьеры.</div>
       <div class="development-note">
         <strong>Игра находится в разработке</strong>
-        <span>Мы хотим добавить онлайн-режим для игры с друзьями. Поддержка донатом поможет оплатить работу серверов и сохранить игру доступной после тестовой недели.</span>
+        <span>Мы хотим добавить онлайн-режим и приватные партии с друзьями прямо в Telegram.</span>
         <a class="support-link" href="${DONATE_URL}" target="_blank" rel="noopener">Поддержать разработку</a>
       </div>
     `);
@@ -588,7 +760,11 @@
   }
 
   function displayCard(card) {
-    return `${displayRank(card).toLowerCase()} ${suitNamesGenitive[card.suit] || card.suitName.toLowerCase()}`;
+    return `«${displayRank(card)} ${suitNamesGenitive[card.suit] || card.suitName.toLowerCase()}»`;
+  }
+
+  function clearCardSelectionDom() {
+    document.querySelectorAll(".card.selected").forEach((item) => item.classList.remove("selected"));
   }
 
   function formatCardCount(count) {
@@ -654,13 +830,21 @@
         && saved.musicVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.musicVolume
         && saved.voiceVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.voiceVolume
         && saved.sfxVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.sfxVolume;
-      if (migratedSavedDefaults) {
+      const migratedPreviousDefaults = saved.settingsVersion !== AUDIO_SETTINGS_VERSION
+        && saved.musicVolume === 18
+        && saved.voiceVolume === 100
+        && saved.sfxVolume === 85;
+      const migratedBoostDefaults = saved.settingsVersion !== AUDIO_SETTINGS_VERSION
+        && saved.musicVolume === 18
+        && saved.voiceVolume === 130
+        && saved.sfxVolume === 100;
+      if (migratedSavedDefaults || migratedPreviousDefaults || migratedBoostDefaults) {
         return { ...DEFAULT_AUDIO_SETTINGS, settingsVersion: AUDIO_SETTINGS_VERSION };
       }
       return {
-        musicVolume: clampVolume(saved.musicVolume ?? DEFAULT_AUDIO_SETTINGS.musicVolume),
-        voiceVolume: clampVolume(saved.voiceVolume ?? DEFAULT_AUDIO_SETTINGS.voiceVolume),
-        sfxVolume: clampVolume(saved.sfxVolume ?? DEFAULT_AUDIO_SETTINGS.sfxVolume),
+        musicVolume: clampVolume(saved.musicVolume ?? DEFAULT_AUDIO_SETTINGS.musicVolume, "musicVolume"),
+        voiceVolume: clampVolume(saved.voiceVolume ?? DEFAULT_AUDIO_SETTINGS.voiceVolume, "voiceVolume"),
+        sfxVolume: clampVolume(saved.sfxVolume ?? DEFAULT_AUDIO_SETTINGS.sfxVolume, "sfxVolume"),
         vibrationEnabled: saved.vibrationEnabled ?? DEFAULT_AUDIO_SETTINGS.vibrationEnabled,
         settingsVersion: AUDIO_SETTINGS_VERSION
       };
@@ -673,13 +857,17 @@
     localStorage.setItem("scopaAudioSettings", JSON.stringify(audioSettings));
   }
 
-  function clampVolume(value) {
+  function clampVolume(value, kind = "musicVolume") {
     const number = Number(value);
     if (!Number.isFinite(number)) return 0;
-    return Math.max(0, Math.min(100, Math.round(number)));
+    const max = VOLUME_LIMITS[kind] || 100;
+    return Math.max(0, Math.min(max, Math.round(number)));
   }
 
   function syncVolumeControls() {
+    musicVolume.max = String(VOLUME_LIMITS.musicVolume);
+    voiceVolume.max = String(VOLUME_LIMITS.voiceVolume);
+    sfxVolume.max = String(VOLUME_LIMITS.sfxVolume);
     musicVolume.value = String(audioSettings.musicVolume);
     voiceVolume.value = String(audioSettings.voiceVolume);
     sfxVolume.value = String(audioSettings.sfxVolume);
@@ -690,7 +878,7 @@
   }
 
   function updateVolume(kind, value) {
-    const volume = clampVolume(value);
+    const volume = clampVolume(value, kind);
     audioSettings[kind] = volume;
     if (kind === "musicVolume") music.setVolume(volume);
     if (kind === "voiceVolume") voice.setVolume(volume);
@@ -755,7 +943,7 @@
   function createSoundEngine(initialVolume) {
     let context = null;
     let unlocked = false;
-    let volume = volumeToLevel(initialVolume);
+    let volume = volumeToLevel(initialVolume, "sfxVolume");
 
     function ensureContext() {
       if (!context) {
@@ -807,7 +995,7 @@
     window.addEventListener("pointerdown", unlock, { once: true });
     window.addEventListener("keydown", unlock, { once: true });
     function setVolume(nextVolume) {
-      volume = volumeToLevel(nextVolume);
+      volume = volumeToLevel(nextVolume, "sfxVolume");
     }
 
     return { play, setVolume };
@@ -820,6 +1008,7 @@
     let restoreTimer = null;
     let baseVolume = volumeToLevel(initialVolume);
     const audio = new Audio(tracks[index]);
+    const gainController = createMediaGainController([audio], baseVolume);
     audio.preload = "auto";
     applyMusicVolume();
 
@@ -837,6 +1026,7 @@
       }
 
       try {
+        gainController.resume();
         await audio.play();
         return true;
       } catch (error) {
@@ -850,11 +1040,11 @@
       applyMusicVolume();
     }
 
-    function duck(duration = 1800) {
+    function duck(duration = 0) {
       ducked = true;
       applyMusicVolume();
       window.clearTimeout(restoreTimer);
-      restoreTimer = window.setTimeout(restore, duration);
+      if (duration > 0) restoreTimer = window.setTimeout(restore, duration);
     }
 
     function restore() {
@@ -865,6 +1055,7 @@
 
     function applyMusicVolume() {
       const nextVolume = ducked ? baseVolume * 0.25 : baseVolume;
+      gainController.setVolume(nextVolume);
       audio.volume = Math.max(0, Math.min(1, nextVolume));
       audio.muted = baseVolume <= 0;
     }
@@ -875,43 +1066,57 @@
   function createVoicePlayer(clips, initialVolume, hooks = {}) {
     const audios = {};
     let pendingTimer = null;
-    let volume = volumeToLevel(initialVolume);
+    let playId = 0;
+    let volume = volumeToLevel(initialVolume, "voiceVolume");
 
-    for (const [name, src] of Object.entries(clips)) {
-      const clip = new Audio(src);
-      clip.preload = "auto";
-      clip.volume = volume;
-      clip.muted = volume <= 0;
-      audios[name] = clip;
+    for (const [name, sources] of Object.entries(clips)) {
+      const sourceList = Array.isArray(sources) ? sources : [sources];
+      audios[name] = sourceList.map((src) => {
+        const clip = new Audio(src);
+        clip.preload = "none";
+        clip.volume = Math.min(1, volume);
+        clip.muted = volume <= 0;
+        return clip;
+      });
     }
+    const allClips = Object.values(audios).flat();
+    const gainController = createMediaGainController(allClips, volume);
 
     function stopAll() {
-      for (const clip of Object.values(audios)) {
+      for (const clip of allClips) {
         clip.pause();
         clip.currentTime = 0;
       }
     }
 
     function play(name, delay = 0) {
-      const clip = audios[name];
-      if (!clip) return;
+      const variants = audios[name] || [];
+      if (!variants.length) return;
+      const clip = variants[Math.floor(Math.random() * variants.length)];
+      const voiceRun = ++playId;
 
       window.clearTimeout(pendingTimer);
       pendingTimer = window.setTimeout(() => {
         stopAll();
+        gainController.resume();
+        gainController.setVolume(volume);
         clip.currentTime = 0;
-        clip.volume = volume;
+        clip.volume = Math.min(1, volume);
         clip.muted = volume <= 0;
         hooks.onStart?.();
-        clip.onended = () => hooks.onEnd?.();
-        clip.play().catch(() => {});
+        clip.onended = () => {
+          if (voiceRun === playId) hooks.onEnd?.();
+        };
+        clip.onerror = () => {
+          if (voiceRun === playId) hooks.onEnd?.();
+        };
+        clip.play().catch(() => {
+          if (voiceRun === playId) hooks.onEnd?.();
+        });
       }, delay);
     }
 
     function unlock() {
-      for (const clip of Object.values(audios)) {
-        clip.load();
-      }
       window.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keydown", unlock);
     }
@@ -919,9 +1124,10 @@
     window.addEventListener("pointerdown", unlock, { once: true });
     window.addEventListener("keydown", unlock, { once: true });
     function setVolume(nextVolume) {
-      volume = volumeToLevel(nextVolume);
-      for (const clip of Object.values(audios)) {
-        clip.volume = volume;
+      volume = volumeToLevel(nextVolume, "voiceVolume");
+      gainController.setVolume(volume);
+      for (const clip of allClips) {
+        clip.volume = Math.min(1, volume);
         clip.muted = volume <= 0;
       }
     }
@@ -929,21 +1135,75 @@
     return { play, setVolume };
   }
 
-  function volumeToLevel(value) {
-    const normalized = clampVolume(value) / 100;
+  function volumeToLevel(value, kind = "musicVolume") {
+    const normalized = clampVolume(value, kind) / 50;
     if (normalized <= 0) return 0;
-    return Math.min(1, normalized);
+    return normalized;
   }
 
-  playButton.addEventListener("click", playSelected);
-  musicButton.addEventListener("click", async () => {
+  function createMediaGainController(elements, initialVolume) {
+    let context = null;
+    let gain = null;
+    let connected = false;
+    let currentVolume = Math.max(0, Math.min(2, initialVolume));
+
+    function ensureGraph() {
+      if (connected) return true;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return false;
+
+      try {
+        context = context || new AudioContext();
+        gain = gain || context.createGain();
+        gain.gain.value = currentVolume;
+        for (const element of elements) {
+          const source = context.createMediaElementSource(element);
+          source.connect(gain);
+        }
+        gain.connect(context.destination);
+        connected = true;
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function resume() {
+      if (ensureGraph() && context && context.state === "suspended") context.resume().catch(() => {});
+    }
+
+    function setVolume(nextVolume) {
+      currentVolume = Math.max(0, Math.min(2, nextVolume));
+      if (ensureGraph() && gain) {
+        const now = context.currentTime;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setTargetAtTime(currentVolume, now, 0.025);
+      }
+    }
+
+    window.addEventListener("pointerdown", resume, { once: true });
+    window.addEventListener("keydown", resume, { once: true });
+
+    return { setVolume, resume };
+  }
+
+  async function toggleMusicFromButton(button) {
     const playing = await music.toggle();
     musicButton.classList.toggle("active", playing);
     musicButton.classList.toggle("muted", !playing);
-    musicButton.textContent = playing ? "♫" : "♪";
+    homeSoundButton.classList.toggle("active", playing);
+    homeSoundButton.classList.toggle("muted", !playing);
+    musicButton.textContent = "\u266b";
     musicButton.setAttribute("aria-label", playing ? "Выключить музыку" : "Включить музыку");
     musicButton.setAttribute("title", playing ? "Выключить музыку" : "Включить музыку");
-  });
+    button?.setAttribute("aria-label", playing ? "Выключить музыку" : "Включить музыку");
+    button?.setAttribute("title", playing ? "Выключить музыку" : "Включить музыку");
+  }
+
+  homeSoundButton.classList.add("muted");
+
+  playButton.addEventListener("click", playSelected);
+  musicButton.addEventListener("click", () => toggleMusicFromButton(musicButton));
   settingsButton.addEventListener("click", () => {
     sound.play("tap");
     syncVolumeControls();
@@ -956,6 +1216,20 @@
   settingsPanel.addEventListener("click", (event) => {
     if (event.target === settingsPanel) settingsPanel.hidden = true;
   });
+  closeDevelopersButton.addEventListener("click", () => {
+    sound.play("tap");
+    developersPanel.hidden = true;
+  });
+  developersPanel.addEventListener("click", (event) => {
+    if (event.target === developersPanel) developersPanel.hidden = true;
+  });
+  closeSupportFeatureButton.addEventListener("click", () => {
+    sound.play("tap");
+    supportFeaturePanel.hidden = true;
+  });
+  supportFeaturePanel.addEventListener("click", (event) => {
+    if (event.target === supportFeaturePanel) supportFeaturePanel.hidden = true;
+  });
   bindVolumeControl(musicVolume, "musicVolume");
   bindVolumeControl(voiceVolume, "voiceVolume");
   bindVolumeControl(sfxVolume, "sfxVolume");
@@ -967,22 +1241,42 @@
     else startRound();
   });
   newMatchButton.addEventListener("click", newMatch);
+  backHomeButton.addEventListener("click", () => {
+    sound.play("tap");
+    homeScreen.classList.remove("hidden");
+  });
   quickPlayButton.addEventListener("click", () => {
     sound.play("tap");
     homeScreen.classList.add("hidden");
   });
-  homeRulesButton.addEventListener("click", () => {
+  homeRulesButton?.addEventListener("click", () => {
     sound.play("tap");
     rulesPanel.hidden = false;
+  });
+  homeSoundButton.addEventListener("click", () => {
+    sound.play("tap");
+    toggleMusicFromButton(homeSoundButton);
   });
   homeSettingsButton.addEventListener("click", () => {
     sound.play("tap");
     syncVolumeControls();
     settingsPanel.hidden = false;
   });
-  homeNewMatchButton.addEventListener("click", () => {
+  homeNewMatchButton?.addEventListener("click", () => {
     newMatch();
     homeScreen.classList.add("hidden");
+  });
+  homeOnlineButton.addEventListener("click", () => {
+    sound.play("tap");
+    supportFeaturePanel.hidden = false;
+  });
+  homeFriendButton.addEventListener("click", () => {
+    sound.play("tap");
+    supportFeaturePanel.hidden = false;
+  });
+  homeDevelopersButton.addEventListener("click", () => {
+    sound.play("tap");
+    developersPanel.hidden = false;
   });
   homeScreen.addEventListener("pointermove", (event) => {
     const rect = homeScreen.getBoundingClientRect();
@@ -994,6 +1288,11 @@
   homeScreen.addEventListener("pointerleave", () => {
     homeScreen.style.setProperty("--hero-drift-x", "0px");
     homeScreen.style.setProperty("--hero-drift-y", "0px");
+  });
+  homeChannelButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    const popup = window.open(CHANNEL_URL, "_blank", "noopener,noreferrer");
+    if (!popup && tg) tg.openTelegramLink(CHANNEL_URL);
   });
   channelButton.addEventListener("click", (event) => {
     event.preventDefault();
@@ -1011,7 +1310,11 @@
     const popup = window.open(DONATE_URL, "_blank", "noopener,noreferrer");
     if (!popup && tg) tg.openTelegramLink(DONATE_URL);
   });
-  rulesButton.addEventListener("click", () => {
+  rulesButton?.addEventListener("click", () => {
+    sound.play("tap");
+    rulesPanel.hidden = false;
+  });
+  topRulesCardButton.addEventListener("click", () => {
     sound.play("tap");
     rulesPanel.hidden = false;
   });
@@ -1037,3 +1340,12 @@
   syncVolumeControls();
   newMatch();
 })();
+
+
+
+
+
+
+
+
+
