@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#123229">
     <title>Скопа</title>
-    <link rel="stylesheet" href="./styles.css?v=20260503-53">
+    <link rel="stylesheet" href="./styles.css?v=20260512-07">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
@@ -31,7 +31,13 @@
     </div>
 
     <section class="home-screen" id="homeScreen" aria-label="Главный экран">
-      <img class="home-logo" src="./assets/ui/home-logo.png?v=20260503-53" alt="Скопа. Итальянская карточная игра">
+      <a class="home-fundraiser" href="https://t.me/appsmeridian_bot?start=dl-1777825418218" target="_blank" rel="noopener" aria-label="Поддержать разработку">
+        <span>Сбор на развитие на 12.05</span>
+        <strong>3 450 / 80 000 ₽</strong>
+        <i aria-hidden="true"><b></b></i>
+      </a>
+
+      <img class="home-logo" src="./assets/ui/home-logo.png?v=20260512-07" alt="Скопа. Итальянская карточная игра">
 
       <nav class="home-start-menu" aria-label="Главное меню">
         <button class="home-play-button" id="quickPlayButton" type="button">Играть</button>
@@ -61,7 +67,7 @@
     <main class="app-shell">
       <header class="topbar">
         <button class="top-rules-card" id="topRulesCardButton" type="button" aria-label="Открыть правила">
-          <img src="./assets/ui/rules-card.png?v=20260503-53" alt="">
+          <img src="./assets/ui/rules-card.png?v=20260512-07" alt="">
         </button>
         <div class="top-actions">
           <button class="icon-button" id="backHomeButton" type="button" aria-label="В главное меню" title="В главное меню">&larr;</button>
@@ -71,7 +77,7 @@
           <button class="icon-button" id="settingsButton" type="button" aria-label="Настройки" title="Настройки">&#9881;</button>
         </div>
         <div class="top-deck" aria-label="Колода">
-          <img src="./assets/cards/back.png?v=20260503-53" alt="">
+          <img src="./assets/cards/back.png?v=20260512-07" alt="">
           <strong id="deckCount">40</strong>
         </div>
       </header>
@@ -88,7 +94,7 @@
       </section>
 
       <section class="opponent">
-        <img class="game-avatar bot-avatar-ui" src="./assets/ui/bot-avatar.png?v=20260503-53" alt="Бот">
+        <img class="game-avatar bot-avatar-ui" src="./assets/ui/bot-avatar.png?v=20260512-07" alt="Бот">
         <span class="avatar-counter bot-avatar-counter" id="botAvatarCounter">0</span>
         <div>
           <span class="section-label">Рука бота</span>
@@ -109,7 +115,7 @@
       </section>
 
       <section class="hand-zone" aria-label="Ваша рука">
-        <img class="game-avatar player-avatar-ui" src="./assets/ui/player-avatar.png?v=20260503-53" alt="Игрок">
+        <img class="game-avatar player-avatar-ui" src="./assets/ui/player-avatar.png?v=20260512-07" alt="Игрок">
         <span class="avatar-counter player-avatar-counter" id="playerAvatarCounter">0</span>
         <div class="zone-title">
           <span class="section-label">Ваша рука</span>
@@ -143,10 +149,10 @@
               <h3>Цель</h3>
               <p>Забирайте карты со стола картой из руки. Раунд идет до конца колоды, матч играется до 11 очков.</p>
               <div class="rules-card-row">
-                <img src="./assets/cards/denari-7.png?v=20260503-53" alt="7 пентаклей">
-                <img src="./assets/cards/coppe-10.png?v=20260503-53" alt="Король кубков">
-                <img src="./assets/cards/spade-1.png?v=20260503-53" alt="Туз мечей">
-                <img src="./assets/cards/bastoni-8.png?v=20260503-53" alt="Валет жезлов">
+                <img src="./assets/cards/denari-7.png?v=20260512-07" alt="7 пентаклей" loading="lazy" decoding="async">
+                <img src="./assets/cards/coppe-10.png?v=20260512-07" alt="Король кубков" loading="lazy" decoding="async">
+                <img src="./assets/cards/spade-1.png?v=20260512-07" alt="Туз мечей" loading="lazy" decoding="async">
+                <img src="./assets/cards/bastoni-8.png?v=20260512-07" alt="Валет жезлов" loading="lazy" decoding="async">
               </div>
             </article>
 
@@ -154,11 +160,11 @@
               <h3>Ход</h3>
               <p>Если на столе нет одиночной карты нужного значения, можно забрать несколько карт, сумма которых равна вашей карте.</p>
               <div class="rules-example">
-                <img src="./assets/cards/spade-9.png?v=20260503-53" alt="9 мечей">
+                <img src="./assets/cards/spade-9.png?v=20260512-07" alt="9 мечей" loading="lazy" decoding="async">
                 <span>=</span>
-                <img src="./assets/cards/denari-2.png?v=20260503-53" alt="2 пентаклей">
+                <img src="./assets/cards/denari-2.png?v=20260512-07" alt="2 пентаклей" loading="lazy" decoding="async">
                 <span>+</span>
-                <img src="./assets/cards/coppe-7.png?v=20260503-53" alt="7 кубков">
+                <img src="./assets/cards/coppe-7.png?v=20260512-07" alt="7 кубков" loading="lazy" decoding="async">
               </div>
             </article>
 
@@ -166,9 +172,9 @@
               <h3>Важное правило</h3>
               <p>Если на столе есть одиночная карта нужного значения, нужно брать именно ее, а не комбинацию из нескольких карт.</p>
               <div class="rules-example">
-                <img src="./assets/cards/bastoni-7.png?v=20260503-53" alt="7 жезлов">
+                <img src="./assets/cards/bastoni-7.png?v=20260512-07" alt="7 жезлов" loading="lazy" decoding="async">
                 <span>></span>
-                <img src="./assets/cards/denari-7.png?v=20260503-53" alt="7 пентаклей">
+                <img src="./assets/cards/denari-7.png?v=20260512-07" alt="7 пентаклей" loading="lazy" decoding="async">
               </div>
             </article>
 
@@ -266,6 +272,14 @@
               <li>Создавать приватную партию и приглашать друга по ссылке в Telegram.</li>
               <li>Играть с живым соперником вместо бота.</li>
             </ul>
+            <div class="fundraising-status" aria-label="Статус сбора средств">
+              <div class="fundraising-row">
+                <span>Собрано на развитие на 12.05</span>
+                <strong>3 450 / 80 000 рублей</strong>
+              </div>
+              <div class="fundraising-bar"><i style="width: 4.3125%"></i></div>
+            </div>
+            <p class="fundraising-next-step">После успешного завершения сбора мы приступим к реализации игры по сети, а также к созданию карточной игры «Рейд».</p>
             <a class="support-link" href="https://t.me/appsmeridian_bot?start=dl-1777825418218" target="_blank" rel="noopener">Поддержать разработку</a>
           </div>
         </div>
@@ -279,7 +293,7 @@
     </main>
     <div class="modal-backdrop" id="modalBackdrop" hidden></div>
 
-    <script src="./game.js?v=20260503-53"></script>
+    <script src="./game.js?v=20260512-07"></script>
   </body>
 </html>
 

@@ -10,12 +10,12 @@
   const DONATE_URL = "https://t.me/appsmeridian_bot?start=dl-1777825418218";
   const CHANNEL_URL = "https://t.me/+N-lQ58PBI9ZiMDJi";
   const USE_CARD_IMAGES = true;
-  const CARD_ASSET_VERSION = "20260503-53";
+  const CARD_ASSET_VERSION = "20260512-07";
   const MUSIC_TRACKS = [
     "./assets/audio/cooking-with-the-italians.mp3",
     "./assets/audio/the-little-cafe.mp3"
   ];
-  const AUDIO_SETTINGS_VERSION = 4;
+  const AUDIO_SETTINGS_VERSION = 5;
   const LEGACY_DEFAULT_AUDIO_SETTINGS = {
     musicVolume: 28,
     voiceVolume: 90,
@@ -23,9 +23,9 @@
     vibrationEnabled: true
   };
   const DEFAULT_AUDIO_SETTINGS = {
-    musicVolume: 9,
-    voiceVolume: 65,
-    sfxVolume: 50,
+    musicVolume: 18,
+    voiceVolume: 75,
+    sfxVolume: 70,
     vibrationEnabled: true
   };
   const VOLUME_LIMITS = {
@@ -363,19 +363,9 @@
   function preloadRoundImages() {
     if (!USE_CARD_IMAGES || !match || !match.round) return;
     const round = match.round;
-    const cards = [...round.deck, ...round.table, ...round.playerHand, ...round.botHand];
+    const cards = [...round.table, ...round.playerHand];
     for (const card of cards) preloadImage(cardImagePath(card));
     preloadImage(`./assets/cards/back.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/felt-bg.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/wood-panel-bot.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/wood-panel-player.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/ui/top-wood-panel.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/ui/bot-avatar.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/ui/player-avatar.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/ui/scopa-medal.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/ui/counter-badge.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/ui/scopa-logo.png?v=${CARD_ASSET_VERSION}`);
-    preloadImage(`./assets/ui/rules-card.png?v=${CARD_ASSET_VERSION}`);
   }
 
   function preloadImage(src) {
@@ -643,6 +633,7 @@
     match.scores.player += result.player.total;
     match.scores.bot += result.bot.total;
     const isMatchOver = match.scores.player >= 11 || match.scores.bot >= 11;
+    const isTie = isMatchOver && match.scores.player === match.scores.bot;
     showRoundPanel(result, isMatchOver);
     if (isMatchOver && match.scores.player > match.scores.bot) {
       sound.play("victory");
@@ -651,8 +642,9 @@
       voice.play("matchWinPlayer", 800);
     } else {
       sound.play("round");
-      if (isMatchOver) voice.play("matchLosePlayer", 800);
-      else if (result.player.total > result.bot.total) voice.play("roundWinPlayer", 600);
+      if (isMatchOver) {
+        if (!isTie) voice.play("matchLosePlayer", 800);
+      } else if (result.player.total > result.bot.total) voice.play("roundWinPlayer", 600);
       else if (result.bot.total > result.player.total) voice.play("roundWinBot", 600);
     }
     setStatus(match.scores.player >= 11 || match.scores.bot >= 11 ? "Матч завершен. Можно начать новый." : "Раунд завершен.", "win");
@@ -720,7 +712,7 @@
     ];
     roundPanel.classList.toggle("match-result", isMatchOver);
     roundPanel.querySelector("h2").textContent = isMatchOver
-      ? (match.scores.player > match.scores.bot ? "Вы выиграли!" : "Вы проиграли")
+      ? (match.scores.player === match.scores.bot ? "Ничья!" : (match.scores.player > match.scores.bot ? "Вы выиграли!" : "Вы проиграли"))
       : `Раунд ${match.roundNumber} завершен`;
     const playerLeft = Math.max(0, 11 - match.scores.player);
     const botLeft = Math.max(0, 11 - match.scores.bot);
@@ -741,6 +733,14 @@
       <div class="development-note">
         <strong>Игра находится в разработке</strong>
         <span>Мы хотим добавить онлайн-режим и приватные партии с друзьями прямо в Telegram.</span>
+        <div class="fundraising-status" aria-label="Статус сбора средств">
+          <div class="fundraising-row">
+            <span>Собрано на развитие на 12.05</span>
+            <strong>3 450 / 80 000 рублей</strong>
+          </div>
+          <div class="fundraising-bar"><i style="width: 4.3125%"></i></div>
+        </div>
+        <p class="fundraising-next-step">После успешного завершения сбора мы приступим к реализации игры по сети, а также к созданию карточной игры «Рейд».</p>
         <a class="support-link" href="${DONATE_URL}" target="_blank" rel="noopener">Поддержать разработку</a>
       </div>
     `);
@@ -826,6 +826,9 @@
   function loadAudioSettings() {
     try {
       const saved = JSON.parse(localStorage.getItem("scopaAudioSettings") || "{}");
+      if (saved.settingsVersion !== AUDIO_SETTINGS_VERSION) {
+        return { ...DEFAULT_AUDIO_SETTINGS, settingsVersion: AUDIO_SETTINGS_VERSION };
+      }
       const migratedSavedDefaults = saved.settingsVersion !== AUDIO_SETTINGS_VERSION
         && saved.musicVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.musicVolume
         && saved.voiceVolume === LEGACY_DEFAULT_AUDIO_SETTINGS.voiceVolume
@@ -838,7 +841,11 @@
         && saved.musicVolume === 18
         && saved.voiceVolume === 130
         && saved.sfxVolume === 100;
-      if (migratedSavedDefaults || migratedPreviousDefaults || migratedBoostDefaults) {
+      const migratedQuietDefaults = saved.settingsVersion !== AUDIO_SETTINGS_VERSION
+        && saved.musicVolume === 9
+        && saved.voiceVolume === 65
+        && saved.sfxVolume === 50;
+      if (migratedSavedDefaults || migratedPreviousDefaults || migratedBoostDefaults || migratedQuietDefaults) {
         return { ...DEFAULT_AUDIO_SETTINGS, settingsVersion: AUDIO_SETTINGS_VERSION };
       }
       return {
@@ -1009,7 +1016,7 @@
     let baseVolume = volumeToLevel(initialVolume);
     const audio = new Audio(tracks[index]);
     const gainController = createMediaGainController([audio], baseVolume);
-    audio.preload = "auto";
+    audio.preload = "none";
     applyMusicVolume();
 
     audio.addEventListener("ended", () => {
@@ -1145,6 +1152,7 @@
     let context = null;
     let gain = null;
     let connected = false;
+    const sources = [];
     let currentVolume = Math.max(0, Math.min(2, initialVolume));
 
     function ensureGraph() {
@@ -1156,11 +1164,19 @@
         context = context || new AudioContext();
         gain = gain || context.createGain();
         gain.gain.value = currentVolume;
-        for (const element of elements) {
-          const source = context.createMediaElementSource(element);
-          source.connect(gain);
-        }
         gain.connect(context.destination);
+        let connectedSources = 0;
+        for (const element of elements) {
+          try {
+            const source = context.createMediaElementSource(element);
+            source.connect(gain);
+            sources.push(source);
+            connectedSources += 1;
+          } catch (error) {
+            // If one media element cannot be attached, keep the rest of the audio working.
+          }
+        }
+        if (connectedSources === 0) return false;
         connected = true;
         return true;
       } catch (error) {
@@ -1326,7 +1342,7 @@
     if (event.target === rulesPanel) rulesPanel.hidden = true;
   });
   document.addEventListener("click", (event) => {
-    const supportLink = event.target.closest(".support-link");
+    const supportLink = event.target.closest(".support-link, .home-fundraiser");
     if (!supportLink) return;
     event.preventDefault();
     const popup = window.open(DONATE_URL, "_blank", "noopener,noreferrer");
